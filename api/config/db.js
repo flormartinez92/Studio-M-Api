@@ -6,10 +6,10 @@ const dbConnection = async () => {
     await moongose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
     });
-    console.log("Base de datos online");
+    console.log("online database");
   } catch (error) {
     console.log(error);
-    throw new Error("Error al iniciar la base de datos");
+    throw new Error("error connecting to the database");
   }
 };
 
