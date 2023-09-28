@@ -1,24 +1,43 @@
 const express = require("express");
-const { loginUser, addUser } = require("../controllers/userController");
+const {
+  loginUser,
+  addUser,
+  userPersistent,
+  logout,
+} = require("../controllers/userController");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middleware/validar-campos");
+const { validateUser } = require("../middleware/auth");
 const router = express.Router();
 
 router.post(
   "/add",
   [
-    check("nombre", "El nombre es obligatorio").not().isEmpty(),
-    check("apellido", "El apellido es obligatorio").not().isEmpty(),
-    check("dni", "El dni es obligatorio").not().isEmpty(),
-    check("correo", "El correo es obligatorio").not().isEmpty(),
-    check("password", "EL password debe tener al menos 5 letras").isLength({
-      min: 5,
+    check("name", "Name is required").not().isEmpty(),
+    check("lastname", "Last name is required").not().isEmpty(),
+    check("dni", "Dni is required").not().isEmpty(),
+    check("mail", "Email is required").not().isEmpty(),
+    check("password", "Password is required").not().isEmpty(),
+    check("password", "The password must be at least 4 characters").isLength({
+      min: 4,
     }),
-    check("correo", "EL correo no es valido").isEmail(),
+    check("mail", "The email is not valid").isEmail(),
     validarCampos,
   ],
   addUser
 );
-router.post("/login", loginUser);
+router.post(
+  "/login",
+  [
+    check("mail", "Email is required").not().isEmpty(),
+    check("mail", "The email is not valid").isEmail(),
+    check("password", "Password is required").not().isEmpty(),
+    validarCampos,
+  ],
+  loginUser
+);
+
+router.get("/me", validateUser, userPersistent);
+router.post("/logout", logout);
 
 module.exports = router;
