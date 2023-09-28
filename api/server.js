@@ -6,6 +6,7 @@ const cors = require("cors");
 const { dbConnection } = require("./config/db");
 require("dotenv").config();
 
+const routes = require("./routes");
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
@@ -17,7 +18,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.use("/api", routes);
 dbConnection();
 
 app.listen(process.env.PORT, () =>
