@@ -9,7 +9,9 @@ require("dotenv").config();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(morgan("tiny"));
 
+app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: `${process.env.STUDIO_M_CLIENT_HOST}`,
