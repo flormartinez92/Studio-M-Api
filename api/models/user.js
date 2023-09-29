@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
+
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -36,20 +37,27 @@ UserSchema.methods.validatorPassword = async function (password) {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
   } catch (error) {
-    return false;
+    console.log(error);;
   }
+};
+
+UserSchema.methods.generateHash = async (password, salt) => {
+  return bcrypt.hash(password, salt);
 };
 
 UserSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(this.password, salt);
+    
     this.salt = salt;
-    this.password = password;
+    this.password = await this.generateHash(this.password, salt);
+
     next();
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
-module.exports = model("User", UserSchema);
+const User = model("User", UserSchema);
+
+module.exports = User;
