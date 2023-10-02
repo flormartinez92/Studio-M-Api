@@ -21,20 +21,23 @@ exports.loginUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   const { mail } = req.body;
+  try {
+    const email = await User.findOne({ mail });
+    if (email) return res.status(400).send("Email is already registered");
 
-  const user = new Usuario(req.body);
-  //verificamos si el correo existe
-  const email = await User.findOne({ mail });
-  if (email) return res.status(400).send("Email is already registered");
-  await user.save();
-  res.send(user);
+    const user = new User(req.body);
+    await user.save();
+    res.send(user);
+  } catch (error) {
+    res.sendStatus(500);
+  }
 };
 
-exports.userPersistent = async (req, res) => {
+exports.userPersistent = (req, res) => {
   res.send(req.user);
 };
 
-exports.logout = async (req, res) => {
+exports.logout = (req, res) => {
   res.clearCookie("token");
   res.sendStatus(204);
 };
