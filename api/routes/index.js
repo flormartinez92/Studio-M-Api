@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-// Punto de entrada rutas
-const user = require("./user");
+const user = require("./user.routes");
 
 router.use("/user", user);
+
 module.exports = router;

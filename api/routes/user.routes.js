@@ -4,10 +4,10 @@ const {
   addUser,
   userPersistent,
   logout,
-} = require("../controllers/userController");
+} = require("../controllers/user.controller");
 const { check } = require("express-validator");
-const { validarCampos } = require("../middleware/validar-campos");
-const { validateUser } = require("../middleware/auth");
+const validateFields = require("../middleware/validateFields.middleware");
+const { validateUser } = require("../middleware/auth.middleware");
 const router = express.Router();
 
 router.post(
@@ -22,22 +22,24 @@ router.post(
       min: 4,
     }),
     check("mail", "The email is not valid").isEmail(),
-    validarCampos,
+    validateFields,
   ],
   addUser
 );
+
 router.post(
   "/login",
   [
     check("mail", "Email is required").not().isEmpty(),
     check("mail", "The email is not valid").isEmail(),
     check("password", "Password is required").not().isEmpty(),
-    validarCampos,
+    validateFields,
   ],
   loginUser
 );
 
 router.get("/me", validateUser, userPersistent);
+
 router.post("/logout", logout);
 
 module.exports = router;
