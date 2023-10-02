@@ -1,14 +1,14 @@
 {
-  "name": "first-plug-platform-api",
+  "name": "studio-m",
   "version": "0.1.0",
-  "description": "Web platform focused on inventory management, acquisition and control.",
-  "main": "index.js",
+  "description": "Web application that allows the purchase of courses and monitoring of the purchased courses.",
+  "main": "server.js",
   "scripts": {
     "server": "nodemon api/server.js"
   },
   "keywords": [
     "backend",
-    "First Plug Platform",
+    "Studio M",
     "node.js",
     "api"
   ],

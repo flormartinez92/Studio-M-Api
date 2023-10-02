@@ -37,7 +37,7 @@ UserSchema.methods.validatorPassword = async function (password) {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
   } catch (error) {
-    console.log(error);;
+    console.log(error);
   }
 };
 
@@ -48,7 +48,7 @@ UserSchema.methods.generateHash = async (password, salt) => {
 UserSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
-    
+
     this.salt = salt;
     this.password = await this.generateHash(this.password, salt);
 
