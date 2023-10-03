@@ -14,12 +14,12 @@ const add = async (req, res) => {
     const cart = await Cart.findOne({user: userId}).exec();
 
     if(!cart) {
-      cart = new Cart({user: userId, course: courseFound._id});
+      cart = new Cart({user: userId, course: [courseFound._id]});
     } else{
-      if(cart.course.equals(courseFound._id)){
+      if(cart.course.includes(courseFound._id)){
         return res.status(400).json({massage: "Course already in the cart"});
       } else{
-        cart.course = courseFound._id;
+        cart.course.push(courseFound._id);
       }
     }
 
