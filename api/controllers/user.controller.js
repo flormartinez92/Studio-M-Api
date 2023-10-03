@@ -41,3 +41,15 @@ exports.logout = (req, res) => {
   res.clearCookie("token");
   res.sendStatus(204);
 };
+
+exports.deleteUser = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) return res.status(404).send("User not found");
+    return res.status(200).send("User deleted successfully");
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
