@@ -5,6 +5,7 @@ const {
   userPersistent,
   logout,
   updateUser,
+  deleteUser,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -71,5 +72,8 @@ router.put(
   ],
   updateUser
 );
+
+router.delete("/:userId", deleteUser);
+
 
 module.exports = router;
