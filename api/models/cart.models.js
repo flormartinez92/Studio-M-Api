@@ -6,11 +6,13 @@ const CartSchema = new Schema({
     ref: "User",
     required: [true, "User is required"],
   },
-  course: {
-    type: Schema.Types.ObjectId,
-    ref: "Course",
-    required: [true, "Course is required"],
-  },
+  course: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
+      required: [true, "Course is required"],
+    },
+  ],
   price: {
     type: Number,
     required: [true, "Price is required"],
