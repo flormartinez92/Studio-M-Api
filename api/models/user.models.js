@@ -30,6 +30,10 @@ const UserSchema = new Schema({
   isAdmin: {
     type: Boolean,
   },
+  profileImg: {
+    type: String,
+    required: [false],
+  },
 });
 
 UserSchema.methods.validatorPassword = async function (password) {

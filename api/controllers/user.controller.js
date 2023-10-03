@@ -41,3 +41,25 @@ exports.logout = (req, res) => {
   res.clearCookie("token");
   res.sendStatus(204);
 };
+
+exports.updateUser = async (req, res) => {
+  const { userId } = req.params;
+  const { name, lastname, dni, password, profileImg } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
+
+    user.name = name || user.name;
+    user.lastname = lastname || user.lastname;
+    user.dni = dni || user.dni;
+    user.password = password || user.password;
+    user.profileImg = profileImg || user.profileImg;
+
+    await user.save();
+
+    return res.status(200).send("Updated user");
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
