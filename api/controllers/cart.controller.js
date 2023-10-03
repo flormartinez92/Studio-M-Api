@@ -6,8 +6,8 @@ const add = async (req, res) => {
   const { courseId, userId } = req.params;
 
   try {
-    const userFound = User.findById(userId).exec();
-    const courseFound = Course.findById(courseId).exec();
+    const userFound = await User.findById(userId).exec();
+    const courseFound = await Course.findById(courseId).exec(); //curso a definir
 
     if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
 
@@ -33,7 +33,28 @@ const add = async (req, res) => {
 };
 
 const remove = async (req, res) => {
+  const { courseId, userId } = req.params;
 
+  try {
+    const userFound = await User.findById(userId).exec();
+    const courseFound = await Course.findById(courseId).exec(); //curso a definir
+
+    if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
+
+    const cart = await Cart.findOne({user: userId}).exec();
+
+    if(!cart) res.status(404).json({ message: "error trying to remove course"});
+    
+    const updatedCourse = cart.course.filter((course_id) => !course_id.equals(courseFound._id));
+    cart.course = updatedCourse;
+    await cart.save();
+
+    return res.status(200).json(cart);
+
+  } catch (error) {
+    console.error(error);
+    res.status(401).json(error);
+  }
 };
 
 const confirmBuy = async (req, res) => {
@@ -41,11 +62,3 @@ const confirmBuy = async (req, res) => {
 };
 
 module.exports = { add, remove, confirmBuy };
-
-  // await Cart_buy.findOrCreate({
-  //   where: {
-  //     bookId,
-  //     userId,
-  //     cartId: lastCart.id,
-  //   },
-  // });
