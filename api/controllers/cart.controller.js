@@ -2,6 +2,7 @@ const Cart = require("../models/cart.models");
 const User = require("../models/user.models");
 const Course = require("../models/course.models");
 
+// Agrear Curso al carrito de compra
 const add = async (req, res) => {
   const { courseId, userId } = req.params;
 
@@ -32,6 +33,7 @@ const add = async (req, res) => {
   }
 };
 
+// Eliminar producto de carrito de compra
 const remove = async (req, res) => {
   const { courseId, userId } = req.params;
 
@@ -57,6 +59,7 @@ const remove = async (req, res) => {
   }
 };
 
+// Confirmacion de Compra
 const confirmBuy = async (req, res) => {
   const { userId } = req.params;
 
