@@ -1,13 +1,13 @@
 const Cart = require("../models/cart.models");
 const User = require("../models/user.models");
-//LLAMAR AL MODELO COURSE
+const Course = require("../models/course.models");
 
 const add = async (req, res) => {
   const { courseId, userId } = req.params;
 
   try {
     const userFound = await User.findById(userId).exec();
-    const courseFound = await Course.findById(courseId).exec(); //curso a definir
+    const courseFound = await Course.findById(courseId).exec();
 
     if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
 
@@ -37,7 +37,7 @@ const remove = async (req, res) => {
 
   try {
     const userFound = await User.findById(userId).exec();
-    const courseFound = await Course.findById(courseId).exec(); //curso a definir
+    const courseFound = await Course.findById(courseId).exec();
 
     if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
 
@@ -58,7 +58,29 @@ const remove = async (req, res) => {
 };
 
 const confirmBuy = async (req, res) => {
+  const { userId } = req.params;
 
+  try {
+    const userFound = await User.findById(userId).exec();
+
+    if(!userFound) res.status(400).json({ message: "User not found" });
+
+    const cart = await Cart.findOne({user: userId}).exec();
+
+    if(!cart) res.status(404).json({ message: "Cart not found"});
+
+    const coursesBought = cart.course;
+    userFound.course.push(...coursesBought);
+    await userFound.save();
+
+    cart.course = [];
+    cart.price = 0;
+    await cart.save();
+
+    return res.status(200).json({ message: "Purchase Confirmed" });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 module.exports = { add, remove, confirmBuy };
