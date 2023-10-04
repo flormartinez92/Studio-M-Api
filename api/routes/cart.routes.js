@@ -9,13 +9,20 @@ router.post("/add/:courseId/:userId",
 [
   check("user", "User is required").not().isEmpty(),
   check("course", "Course is required").not().isEmpty(),
-  check("price", "Price is required").not().isEmpty(),
   validateFields
 ], cartController.add)
 
 // Eliminar producto de carrito de compra
-router.delete("remove/:courseId/:userId", cartController.remove)
+router.delete("remove/:courseId/:userId",
+[
+  check("user", "User is required").not().isEmpty(),
+  check("course", "Course is required").not().isEmpty(),
+  validateFields
+], cartController.remove)
 
 // Confirmacion de Compra
-
-//Pendiente confirmacion de compra
+router.post("/confirmBuy/:userId",
+[
+  check("user", "User is required").not().isEmpty(),
+  validateFields
+], cartController.confirmBuy)
