@@ -6,6 +6,7 @@ const {
   logout,
   updateUser,
   deleteUser,
+  forgotPassword,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -75,5 +76,14 @@ router.put(
 
 router.delete("/:userId", deleteUser);
 
+router.post(
+  "/forgot",
+  [
+    check("mail", "Email is required").not().isEmpty(),
+    check("mail", "The email is not valid").isEmail(),
+    validateFields,
+  ],
+  forgotPassword
+);
 
 module.exports = router;
