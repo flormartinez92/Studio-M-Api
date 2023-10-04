@@ -26,3 +26,5 @@ router.post("/confirmBuy/:userId",
   check("user", "User is required").not().isEmpty(),
   validateFields
 ], cartController.confirmBuy)
+
+module.exports = router;
