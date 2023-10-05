@@ -43,6 +43,6 @@ const CourseSchema = new Schema({
   },
 });
 
-const Project = model("Course", CourseSchema);
+const Course = model("Course", CourseSchema);
 
-module.exports = Project;
+module.exports = Course;
