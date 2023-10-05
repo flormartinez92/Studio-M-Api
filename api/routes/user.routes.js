@@ -78,9 +78,9 @@ router.put(
 
 router.delete("/:userId", deleteUser);
 
-router.get("/all", allCourses);
+router.get("/allCourses", allCourses);
 
-router.get("/all/:courseId", oneCourse);
+router.get("/allCourses/:courseId", oneCourse);
 
 router.post(
   "/forgot",
@@ -91,6 +91,5 @@ router.post(
   ],
   forgotPassword
 );
-
 
 module.exports = router;
