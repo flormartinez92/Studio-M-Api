@@ -6,6 +6,8 @@ const {
   logout,
   updateUser,
   deleteUser,
+  allCourses,
+  oneCourse,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -75,5 +77,8 @@ router.put(
 
 router.delete("/:userId", deleteUser);
 
+router.get("/all", allCourses);
+
+router.get("/all/:courseId", oneCourse);
 
 module.exports = router;

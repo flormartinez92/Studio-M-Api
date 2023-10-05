@@ -1,4 +1,7 @@
 const User = require("../models/user.models");
+const Course = require("../models/course.models");
+const mongoose = require("mongoose");
+
 const { generateToken } = require("../config/token");
 
 exports.loginUser = async (req, res) => {
@@ -72,6 +75,35 @@ exports.deleteUser = async (req, res) => {
     if (!user) return res.status(404).send("User not found");
     return res.status(200).send("User deleted successfully");
   } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// Obtener todos los cursos
+
+exports.allCourses = async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.send({ courses });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+};
+
+//Obtener un curso en particular
+
+exports.oneCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    console.log("holaaaaa", courseId);
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.sendStatus(404);
+    }
+    res.send({ course });
+  } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 };
