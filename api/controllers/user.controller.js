@@ -97,7 +97,7 @@ exports.forgotPassword = async (req, res) => {
     let resetToken = crypto.randomBytes(32).toString("hex");
 
     // Now, create a hash of this token, which we’ll save in the database because saving plain resetToken in our database can open up vulnerabilities
-    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+    const hash = await bcrypt.hash(resetToken, 10);
 
     await new Token({
       userId: userMail._id,

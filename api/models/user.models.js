@@ -51,7 +51,7 @@ UserSchema.methods.generateHash = async (password, salt) => {
 
 UserSchema.pre("save", async function (next) {
   try {
-    const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT));
+    const salt = await bcrypt.genSalt(10);
 
     this.salt = salt;
     this.password = await this.generateHash(this.password, salt);
