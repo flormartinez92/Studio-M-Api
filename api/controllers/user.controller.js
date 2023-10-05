@@ -1,4 +1,7 @@
 const User = require("../models/user.models");
+const Course = require("../models/course.models");
+const mongoose = require("mongoose");
+
 const { generateToken } = require("../config/token");
 
 const Token = require("../models/token.models");
@@ -81,6 +84,29 @@ exports.deleteUser = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+
+exports.allCourses = async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.send({ courses });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+};
+
+
+exports.oneCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.sendStatus(404);
+    }
+    res.send({ course });
+  } catch (error) {
+    console.error(error);
 
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;

@@ -6,6 +6,8 @@ const {
   logout,
   updateUser,
   deleteUser,
+  allCourses,
+  oneCourse,
   forgotPassword,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
@@ -76,6 +78,10 @@ router.put(
 
 router.delete("/:userId", deleteUser);
 
+router.get("/all", allCourses);
+
+router.get("/all/:courseId", oneCourse);
+
 router.post(
   "/forgot",
   [
@@ -85,5 +91,6 @@ router.post(
   ],
   forgotPassword
 );
+
 
 module.exports = router;
