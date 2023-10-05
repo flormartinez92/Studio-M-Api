@@ -6,11 +6,11 @@ const CourseSchema = new Schema({
     required: [true, "Course Title is required"],
   },
   courseSubtitle: {
-    type: Text,
+    type: String,
     required: [false],
   },
   courseDescription: {
-    type: Text,
+    type: String,
     required: [true, "Course Description is required"],
   },
   modules: {
@@ -18,11 +18,11 @@ const CourseSchema = new Schema({
     required: [true, "Modules is required"],
   },
   topics: {
-    type: Text,
+    type: String,
     required: [true, "Topics is required"],
   },
   classes: {
-    type: Text,
+    type: String,
     required: [true, "Classes is required"],
   },
   videoUrl: {
@@ -30,16 +30,16 @@ const CourseSchema = new Schema({
     required: [true, "Video Url is required"],
   },
   projects: {
-    type: Text,
+    type: String,
     required: [true, "Projects is required"],
   },
   projectsDescription: {
-    type: Text,
+    type: String,
     required: [true, "Projects Description is required"],
   },
   completedCourse: {
-    type: Text,
-    required: [fasle],
+    type: String,
+    required: [false],
   },
 });
 
