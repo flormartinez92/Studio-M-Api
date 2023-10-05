@@ -4,6 +4,12 @@ const mongoose = require("mongoose");
 
 const { generateToken } = require("../config/token");
 
+const Token = require("../models/token.models");
+const crypto = require("crypto");
+const bcrypt = require("bcrypt");
+const sendEmail = require("../utils/sendEmail");
+const { log } = require("console");
+
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
 
@@ -79,7 +85,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Obtener todos los cursos
 
 exports.allCourses = async (req, res) => {
   try {
@@ -91,12 +96,10 @@ exports.allCourses = async (req, res) => {
   }
 };
 
-//Obtener un curso en particular
 
 exports.oneCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
-    console.log("holaaaaa", courseId);
     const course = await Course.findById(courseId);
     if (!course) {
       return res.sendStatus(404);
@@ -104,6 +107,45 @@ exports.oneCourse = async (req, res) => {
     res.send({ course });
   } catch (error) {
     console.error(error);
+
+exports.forgotPassword = async (req, res) => {
+  const { mail } = req.body;
+
+  try {
+    const userMail = await User.findOne({ mail });
+    if (!userMail) return res.status(404).send("user not found");
+
+    //  If the user exists, we check if there is an existing token that has been created for this user. If one exists, we delete the token.
+    let token = await Token.findOne({ userId: userMail._id });
+    if (token) await token.deleteOne();
+
+    // In this section of the code, a new random token is generated using the Node.js crypto API. This token will be sent to the user and can be used to reset their password.
+
+    // crypto --> biblioteca incorporada en Node.js que proporciona funciones criptograficas.
+    let resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Now, create a hash of this token, which we’ll save in the database because saving plain resetToken in our database can open up vulnerabilities
+    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+
+    await new Token({
+      userId: userMail._id,
+      token: hash,
+      createdAt: Date.now(),
+    }).save();
+
+    const link = `${process.env.STUDIO_M_CLIENT_HOST}passwordReset?token=${resetToken}&id=${userMail._id}`;
+
+    sendEmail(
+      userMail.mail,
+      "Recuperar contraseña",
+      {
+        name: userMail.name,
+        link: link,
+      },
+      `./template/requestResetPassword.handlebars`
+    );
+    res.status(200).send(link);
+  } catch (error) {
     res.sendStatus(500);
   }
 };
