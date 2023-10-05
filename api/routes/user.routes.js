@@ -7,6 +7,7 @@ const {
   updateUser,
   deleteUser,
   forgotPassword,
+  resetPassword,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -84,6 +85,20 @@ router.post(
     validateFields,
   ],
   forgotPassword
+);
+
+router.post(
+  "/resetPassword",
+  [
+    body("userId").isMongoId().withMessage("Invalid userId format"),
+    body("token").notEmpty().withMessage("Token is required"),
+    check("password", "Password is required").not().isEmpty(),
+    check("password", "The password must be at least 4 characters").isLength({
+      min: 4,
+    }),
+    validateFields,
+  ],
+  resetPassword
 );
 
 module.exports = router;

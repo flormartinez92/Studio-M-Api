@@ -5,7 +5,6 @@ const Token = require("../models/token.models");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
-const { log } = require("console");
 
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
@@ -82,6 +81,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+// Ruta para poner el mail y que te envien un correo con un link de recuperacion de contraseña.
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;
 
@@ -94,8 +94,6 @@ exports.forgotPassword = async (req, res) => {
     if (token) await token.deleteOne();
 
     // In this section of the code, a new random token is generated using the Node.js crypto API. This token will be sent to the user and can be used to reset their password.
-
-    // crypto --> biblioteca incorporada en Node.js que proporciona funciones criptograficas.
     let resetToken = crypto.randomBytes(32).toString("hex");
 
     // Now, create a hash of this token, which we’ll save in the database because saving plain resetToken in our database can open up vulnerabilities
@@ -107,7 +105,7 @@ exports.forgotPassword = async (req, res) => {
       createdAt: Date.now(),
     }).save();
 
-    const link = `${process.env.STUDIO_M_CLIENT_HOST}passwordReset?token=${resetToken}&id=${userMail._id}`;
+    const link = `${process.env.STUDIO_M_CLIENT_HOST}reset-password?token=${resetToken}&id=${userMail._id}`;
 
     sendEmail(
       userMail.mail,
@@ -119,6 +117,43 @@ exports.forgotPassword = async (req, res) => {
       `./template/requestResetPassword.handlebars`
     );
     res.status(200).send(link);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// Ruta para recuperar la contraseña.
+exports.resetPassword = async (req, res) => {
+  const { userId, token, password } = req.body;
+
+  try {
+    let passwordResetToken = await Token.findOne({ userId });
+    if (!passwordResetToken)
+      return res.status(404).send("Invalid or expired password reset token");
+
+    const isValid = await bcrypt.compare(token, passwordResetToken.token);
+    if (!isValid)
+      return res.status(404).send("Invalid or expired password reset token");
+
+    const user = await User.findById({ _id: userId });
+    if (!user) return res.status(404).send("user not found");
+
+    const hash = await bcrypt.hash(password, user.salt);
+    await User.updateOne(
+      { _id: userId },
+      { $set: { password: hash } },
+      { new: true }
+    );
+
+    sendEmail(
+      user.mail,
+      "Contraseña recuperada exitosamente",
+      { name: user.name },
+      "./template/resetPassword.handlebars"
+    );
+    await passwordResetToken.deleteOne();
+
+    res.status(200).send("Password reset was successful");
   } catch (error) {
     res.sendStatus(500);
   }
