@@ -36,17 +36,53 @@ const updateProject = async (req, res) => {
     res.status(200).json({ message: "corrected project" });
   } catch (error) {
     console.error(error);
-    res.status(401).json(error);
+    res.status(500).json(error);
   }
 };
 
 //crear un cupon
-const createCoupon = async (req, res) => {};
+const createCoupon = async (req, res) => {
+  try {
+    const couponCreated = await Coupon.create(req.body);
+    if (!couponCreated) {
+      return res.status(404).json({ message: "error when creating a coupon" });
+    }
+
+    res.status(204).json({ message: "coupon created successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
 
 //eliminar un cupon
-const deleteCoupon = async (req, res) => {};
+const deleteCoupon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const couponRemoved = await Coupon.findOneAndDelete({ $where: id });
+    if (!couponRemoved) {
+      return res.status(404).json({ message: "error when deleting a coupon" });
+    }
+
+    res.status(200).json({ message: "coupon successfully deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
 
 //actualizar un cupon
-const updateCoupon = async (req, res) => {};
+const updateCoupon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const couponToUpdate = await Coupon.findById(id);
+    if (!couponToUpdate) {
+      return res.status(401).json({ message: "coupon not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
 
-module.exports = { allProjects, updateProject };
+module.exports = { allProjects, updateProject, createCoupon, deleteCoupon };
