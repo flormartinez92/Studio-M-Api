@@ -11,33 +11,42 @@ const CourseSchema = new Schema({
   },
   courseDescription: {
     type: String,
-    required: [true, "Course Description is required"],
+    required: [true, "Course Description are required"],
   },
-  modules: {
+  modules: [
+    {
+      type: String,
+      required: [true, "Modules are required"],
+
+      topics: [
+        {
+          type: String,
+          required: [true, "Topics are required"],
+
+          classes: [
+            {
+              type: String,
+              required: [true, "Classes are required"],
+
+              videoUrl: {
+                type: String,
+                required: [true, "Video Url is required"],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  FinalProject: {
     type: String,
-    required: [true, "Modules is required"],
+    required: [true, "Project title is required"],
   },
-  topics: {
+  projectDescription: {
     type: String,
-    required: [true, "Topics is required"],
+    required: [true, "Project Description is required"],
   },
-  classes: {
-    type: String,
-    required: [true, "Classes is required"],
-  },
-  videoUrl: {
-    type: String,
-    required: [true, "Video Url is required"],
-  },
-  projects: {
-    type: String,
-    required: [true, "Projects is required"],
-  },
-  projectsDescription: {
-    type: String,
-    required: [true, "Projects Description is required"],
-  },
-  completedCourse: {
+  finishedCourseDescription: {
     type: String,
     required: [false],
   },
