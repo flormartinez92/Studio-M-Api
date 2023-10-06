@@ -105,7 +105,7 @@ exports.forgotPassword = async (req, res) => {
       createdAt: Date.now(),
     }).save();
 
-    const link = `${process.env.STUDIO_M_CLIENT_HOST}reset-password?token=${resetToken}&id=${userMail._id}`;
+    const link = `${process.env.STUDIO_M_CLIENT_HOST}/reset-password?token=${resetToken}&id=${userMail._id}`;
 
     sendEmail(
       userMail.mail,
