@@ -1,4 +1,3 @@
-const Course = require("../models/course.models");
 const Project = require("../models/project.models");
 const Coupon = require("../models/coupon.models");
 const mongoose = require("mongoose");
@@ -16,10 +15,9 @@ const allProjects = async (req, res) => {
 
 //actualizar proyecto, aprobar o desaprobar
 const updateProject = async (req, res) => {
+  const { isApproved } = req.body;
+  const id = req.params.projectId;
   try {
-    const { isApproved } = req.body;
-    const id = req.params.projectId;
-
     // aca verificamos si el proyecto existe
     const existingProject = await Project.findById(id);
 
@@ -43,12 +41,14 @@ const updateProject = async (req, res) => {
 //crear un cupon
 const createCoupon = async (req, res) => {
   try {
-    const couponCreated = await Coupon.create(req.body);
-    if (!couponCreated) {
+    const newCoupon = await Coupon.create(req.body);
+    if (!newCoupon) {
       return res.status(404).json({ message: "error when creating a coupon" });
     }
 
-    res.status(204).json({ message: "coupon created successfully" });
+    res
+      .status(201)
+      .json({ message: "coupon created successfully", coupon: newCoupon });
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
@@ -57,9 +57,9 @@ const createCoupon = async (req, res) => {
 
 //eliminar un cupon
 const deleteCoupon = async (req, res) => {
+  const { couponId } = req.params;
   try {
-    const { id } = req.params;
-    const couponRemoved = await Coupon.findOneAndDelete({ $where: id });
+    const couponRemoved = await Coupon.findOneAndDelete({ $where: couponId });
     if (!couponRemoved) {
       return res.status(404).json({ message: "error when deleting a coupon" });
     }
@@ -73,16 +73,45 @@ const deleteCoupon = async (req, res) => {
 
 //actualizar un cupon
 const updateCoupon = async (req, res) => {
+  const { couponId } = req.params;
+  const {
+    couponTitle,
+    couponDescription,
+    couponCode,
+    startDate,
+    endDate,
+    discountCoupon,
+  } = req.body;
+
   try {
-    const { id } = req.params;
-    const couponToUpdate = await Coupon.findById(id);
+    const couponToUpdate = await Coupon.findById(couponId);
     if (!couponToUpdate) {
       return res.status(401).json({ message: "coupon not found" });
     }
+
+    // aca actualizamos con lo que nos llegan por el req.body o lo dejamos como esta(si es q no viene nada por el body)
+    couponToUpdate.couponTitle = couponTitle || couponToUpdate.couponTitle;
+    couponToUpdate.couponDescription =
+      couponDescription || couponToUpdate.couponDescription;
+    couponToUpdate.couponCode = couponCode || couponToUpdate.couponCode;
+    couponToUpdate.startDate = startDate || couponToUpdate.startDate;
+    couponToUpdate.endDate = endDate || couponToUpdate.endDate;
+    couponToUpdate.discountCoupon =
+      discountCoupon || couponToUpdate.discountCoupon;
+
+    await couponToUpdate.save();
+
+    res.status(200).json({ message: "coupon updated successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
-module.exports = { allProjects, updateProject, createCoupon, deleteCoupon };
+module.exports = {
+  allProjects,
+  updateProject,
+  createCoupon,
+  deleteCoupon,
+  updateCoupon,
+};
