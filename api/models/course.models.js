@@ -1,54 +1,69 @@
 const { Schema, model } = require("mongoose");
+const Class = new Schema({
+  classInfo: {
+    type: String,
+    required: [true, "class is required"],
+  },
+  video_url: {
+    type: String,
+    required: [true, "url is required"],
+  },
+});
+
+const topic = new Schema({
+  topicName: {
+    type: String,
+    required: [true, "topic name is required"],
+  },
+  classes: {
+    type: [Class],
+    required: [true, "classes is required"],
+  },
+});
+
+const moduleSchema = new Schema({
+  moduleName: {
+    type: String,
+    required: [true, "Module name is required"],
+  },
+  topics: {
+    type: [topic],
+    required: [true, "topics is required"],
+  },
+});
 
 const CourseSchema = new Schema({
   courseTitle: {
     type: String,
-    required: [true, "Course Title is required"],
+    required: [true, "Course title is required"],
   },
   courseSubtitle: {
     type: String,
-    required: [false],
+    required: [true, "Course subtitle is required"],
   },
   courseDescription: {
     type: String,
-    required: [true, "Course Description are required"],
+    required: [true, "Course description is required"],
   },
-  modules: [
-    {
-      type: String,
-      required: [true, "Modules are required"],
-
-      topics: [
-        {
-          type: String,
-          required: [true, "Topics are required"],
-
-          classes: [
-            {
-              type: String,
-              required: [true, "Classes are required"],
-
-              videoUrl: {
-                type: String,
-                required: [true, "Video Url is required"],
-              },
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  FinalProject: {
+  courseImg_url: {
     type: String,
-    required: [true, "Project title is required"],
+    required: [true, "url is required"],
   },
-  projectDescription: {
-    type: String,
-    required: [true, "Project Description is required"],
+  modules: {
+    type: [moduleSchema],
+    required: [true, "Modules is required"],
   },
-  finishedCourseDescription: {
+  projects: {
     type: String,
-    required: [false],
+    required: [true, "Projects is required"],
+  },
+  projectsDescription: {
+    type: String,
+    required: [true, "Projects description is required"],
+  },
+  completedCourse: {
+    type: String,
+    required: [true, "Completed description is required"],
   },
 });
 
