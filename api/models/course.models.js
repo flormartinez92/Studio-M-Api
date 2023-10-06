@@ -4,6 +4,10 @@ const Class = new Schema({
     type: String,
     required: [true, "class is required"],
   },
+  video_url: {
+    type: String,
+    required: [true, "url is required"],
+  },
 });
 
 const topic = new Schema({
@@ -40,6 +44,10 @@ const CourseSchema = new Schema({
   courseDescription: {
     type: String,
     required: [true, "Course description is required"],
+  },
+  courseImg_url: {
+    type: String,
+    required: [true, "url is required"],
   },
   modules: {
     type: [moduleSchema],
