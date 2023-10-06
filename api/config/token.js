@@ -1,5 +1,4 @@
 // Configuracion JWT
-// Configuracion JWT
 const jwt = require("jsonwebtoken");
 
 const generateToken = (data) => {
