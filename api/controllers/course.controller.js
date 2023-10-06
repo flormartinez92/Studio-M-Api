@@ -1,9 +1,11 @@
+const Course = require("../models/course.models");
 const Project = require("../models/project.models");
 const Coupon = require("../models/coupon.models");
 const mongoose = require("mongoose");
 
+//rutas de marcos
 //Ver todos los proyectos
-const allProjects = async (req, res) => {
+exports.allProjects = async (req, res) => {
   try {
     const projects = await Project.find();
     res.status(200).json(projects);
@@ -14,7 +16,7 @@ const allProjects = async (req, res) => {
 };
 
 //actualizar proyecto, aprobar o desaprobar
-const updateProject = async (req, res) => {
+exports.updateProject = async (req, res) => {
   const { isApproved } = req.body;
   const id = req.params.projectId;
   try {
@@ -39,7 +41,7 @@ const updateProject = async (req, res) => {
 };
 
 //crear un cupon
-const createCoupon = async (req, res) => {
+exports.createCoupon = async (req, res) => {
   try {
     const newCoupon = await Coupon.create(req.body);
     if (!newCoupon) {
@@ -56,7 +58,7 @@ const createCoupon = async (req, res) => {
 };
 
 //eliminar un cupon
-const deleteCoupon = async (req, res) => {
+exports.deleteCoupon = async (req, res) => {
   const { couponId } = req.params;
   try {
     const couponRemoved = await Coupon.findOneAndDelete({ $where: couponId });
@@ -72,32 +74,16 @@ const deleteCoupon = async (req, res) => {
 };
 
 //actualizar un cupon
-const updateCoupon = async (req, res) => {
+exports.updateCoupon = async (req, res) => {
   const { couponId } = req.params;
-  const {
-    couponTitle,
-    couponDescription,
-    couponCode,
-    startDate,
-    endDate,
-    discountCoupon,
-  } = req.body;
-
+  const payload = req.body;
   try {
-    const couponToUpdate = await Coupon.findById(couponId);
+    const couponToUpdate = await Coupon.findByIdAndUpdate(couponId, payload, {
+      new: true,
+    });
     if (!couponToUpdate) {
       return res.status(401).json({ message: "coupon not found" });
     }
-
-    // aca actualizamos con lo que nos llegan por el req.body o lo dejamos como esta(si es q no viene nada por el body)
-    couponToUpdate.couponTitle = couponTitle || couponToUpdate.couponTitle;
-    couponToUpdate.couponDescription =
-      couponDescription || couponToUpdate.couponDescription;
-    couponToUpdate.couponCode = couponCode || couponToUpdate.couponCode;
-    couponToUpdate.startDate = startDate || couponToUpdate.startDate;
-    couponToUpdate.endDate = endDate || couponToUpdate.endDate;
-    couponToUpdate.discountCoupon =
-      discountCoupon || couponToUpdate.discountCoupon;
 
     await couponToUpdate.save();
 
@@ -108,10 +94,13 @@ const updateCoupon = async (req, res) => {
   }
 };
 
-module.exports = {
-  allProjects,
-  updateProject,
-  createCoupon,
-  deleteCoupon,
-  updateCoupon,
+//rutas de ivan
+exports.addCourse = async (req, res) => {
+  try {
+    const course = new Course(req.body);
+    await course.save();
+    res.send(course);
+  } catch (error) {
+    res.sendStatus(500);
+  }
 };

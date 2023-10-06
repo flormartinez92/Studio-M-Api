@@ -9,6 +9,7 @@ const {
   allCourses,
   oneCourse,
   forgotPassword,
+  resetPassword,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -78,9 +79,9 @@ router.put(
 
 router.delete("/:userId", deleteUser);
 
-router.get("/all", allCourses);
+router.get("/allCourses", allCourses);
 
-router.get("/all/:courseId", oneCourse);
+router.get("/allCourses/:courseId", oneCourse);
 
 router.post(
   "/forgot",
@@ -92,5 +93,18 @@ router.post(
   forgotPassword
 );
 
+router.post(
+  "/resetPassword",
+  [
+    body("userId").isMongoId().withMessage("Invalid userId format"),
+    body("token").notEmpty().withMessage("Token is required"),
+    check("password", "Password is required").not().isEmpty(),
+    check("password", "The password must be at least 4 characters").isLength({
+      min: 4,
+    }),
+    validateFields,
+  ],
+  resetPassword
+);
 
 module.exports = router;
