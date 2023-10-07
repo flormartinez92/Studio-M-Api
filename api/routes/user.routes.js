@@ -6,6 +6,8 @@ const {
   logout,
   updateUser,
   deleteUser,
+  allCourses,
+  oneCourse,
   forgotPassword,
   resetPassword,
 } = require("../controllers/user.controller");
@@ -76,6 +78,10 @@ router.put(
 );
 
 router.delete("/:userId", deleteUser);
+
+router.get("/allCourses", allCourses);
+
+router.get("/allCourses/:courseId", oneCourse);
 
 router.post(
   "/forgot",
