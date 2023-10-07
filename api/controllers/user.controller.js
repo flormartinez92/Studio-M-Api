@@ -116,7 +116,7 @@ exports.forgotPassword = async (req, res) => {
       },
       `./template/requestResetPassword.handlebars`
     );
-    res.status(200).send(link);
+    res.sendStatus(200);
   } catch (error) {
     res.sendStatus(500);
   }
