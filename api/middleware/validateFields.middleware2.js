@@ -1,4 +1,5 @@
 const { validationResult, check } = require("express-validator");
+const { default: mongoose } = require("mongoose");
 
 const validateCourse = [
   check("courseTitle", "Course title is required").not().isEmpty(),
@@ -20,6 +21,7 @@ const validateCourse = [
     .not()
     .isEmpty(),
 ];
+
 const validateFields = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).send(errors);
