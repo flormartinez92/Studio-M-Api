@@ -15,11 +15,11 @@ const CouponSchema = new Schema({
     required: [true, "Coupon Code is required"],
   },
   startDate: {
-    type: String,
+    type: Date,
     required: [true, "Start Date is required"],
   },
   endDate: {
-    type: String,
+    type: Date,
     required: [true, "End Date is required"],
   },
   quantityAvailable: {
