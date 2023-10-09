@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 exports.allProjects = async (req, res) => {
   try {
     const projects = await Project.find();
+    console.log(projects, "los projectsssssss")
     res.status(200).json(projects);
   } catch (error) {
     console.error(error);
@@ -61,7 +62,7 @@ exports.createCoupon = async (req, res) => {
 exports.deleteCoupon = async (req, res) => {
   const { couponId } = req.params;
   try {
-    const couponRemoved = await Coupon.findOneAndDelete({ $where: couponId });
+    const couponRemoved = await Coupon.findByIdAndDelete(couponId);
     if (!couponRemoved) {
       return res.status(404).json({ message: "error when deleting a coupon" });
     }
