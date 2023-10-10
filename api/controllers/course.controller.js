@@ -79,7 +79,7 @@ exports.updateCoupon = async (req, res) => {
   const { id } = req.params;
   const payload = req.body;
   try {
-    const couponToUpdate = await Coupon.findByIdAndUpdate(idd, payload, {
+    const couponToUpdate = await Coupon.findByIdAndUpdate(id, payload, {
       new: true,
     });
     if (!couponToUpdate) {
