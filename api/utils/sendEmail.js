@@ -10,8 +10,8 @@ const sendEmail = async (email, subject, payload, template) => {
       port: 465,
       secure: true,
       auth: {
-        user: "ewine.super@gmail.com",
-        pass: "rlkl quti yjer glyq",
+        user: process.env.STUDIO_M_CLIENT_EMAIL,
+        pass: process.env.STUDIO_M_CLIENT_PASSWORD,
       },
     });
 
@@ -20,7 +20,7 @@ const sendEmail = async (email, subject, payload, template) => {
 
     const options = () => {
       return {
-        from: "ewine.super@gmail.com",
+        from: process.env.STUDIO_M_CLIENT_EMAIL,
         to: email,
         subject: subject,
         html: compiledTemplate(payload),
