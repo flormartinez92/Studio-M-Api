@@ -15,20 +15,43 @@ const {
   createCoupon,
   deleteCoupon,
   updateCoupon,
+
+  addCourse,
+  updateCourse,
+  deleteCourse,
+  getUsers,
 } = require("../controllers/course.controller");
 
 const router = express.Router();
 
 //rutas de marcos
 router.get("/projects", allProjects);
-router.put("/updateProject/:projectId", updateProject);
-router.post("/createCoupon", validateCoupon, createCoupon);
-router.delete("/deleteCoupon/:couponId", validateDeleteCoupon, deleteCoupon);
-router.put("/updateCoupon/:couponId", validateCoupon, updateCoupon);
+router.put(
+  "/updateProject/:id",
+  [check("id", "id is not type mongo").isMongoId()],
+  updateProject
+);
+router.post("/addCoupon", validateCoupon, createCoupon);
+router.delete("/deleteCoupon/:id", validateDeleteCoupon, deleteCoupon);
+router.put(
+  "/updateCoupon/:id",
+  [check("id", "id is not type mongo").isMongoId()],
+  updateCoupon
+);
 
 //rutas de ivan
-const { addCourse } = require("../controllers/course.controller");
 
 router.post("/add", validateCourse, addCourse);
+router.put(
+  "/:id",
+  [check("id", "id is not type mongo").isMongoId(), validateFields],
+  updateCourse
+);
+router.delete(
+  "/:id",
+  [check("id", "id is not type mongo").isMongoId(), validateFields],
+  deleteCourse
+);
+router.get("/", getUsers);
 
 module.exports = router;

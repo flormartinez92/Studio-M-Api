@@ -1,4 +1,5 @@
 const Course = require("../models/course.models");
+const User = require("../models/user.models");
 const Project = require("../models/project.models");
 const Coupon = require("../models/coupon.models");
 const mongoose = require("mongoose");
@@ -8,7 +9,6 @@ const mongoose = require("mongoose");
 exports.allProjects = async (req, res) => {
   try {
     const projects = await Project.find();
-    console.log(projects, "los projectsssssss")
     res.status(200).json(projects);
   } catch (error) {
     console.error(error);
@@ -19,7 +19,7 @@ exports.allProjects = async (req, res) => {
 //actualizar proyecto, aprobar o desaprobar
 exports.updateProject = async (req, res) => {
   const { isApproved } = req.body;
-  const id = req.params.projectId;
+  const id = req.params.id;
   try {
     // aca verificamos si el proyecto existe
     const existingProject = await Project.findById(id);
@@ -60,9 +60,9 @@ exports.createCoupon = async (req, res) => {
 
 //eliminar un cupon
 exports.deleteCoupon = async (req, res) => {
-  const { couponId } = req.params;
+  const { id } = req.params;
   try {
-    const couponRemoved = await Coupon.findByIdAndDelete(couponId);
+    const couponRemoved = await Coupon.findByIdAndDelete(id);
     if (!couponRemoved) {
       return res.status(404).json({ message: "error when deleting a coupon" });
     }
@@ -76,10 +76,10 @@ exports.deleteCoupon = async (req, res) => {
 
 //actualizar un cupon
 exports.updateCoupon = async (req, res) => {
-  const { couponId } = req.params;
+  const { id } = req.params;
   const payload = req.body;
   try {
-    const couponToUpdate = await Coupon.findByIdAndUpdate(couponId, payload, {
+    const couponToUpdate = await Coupon.findByIdAndUpdate(idd, payload, {
       new: true,
     });
     if (!couponToUpdate) {
@@ -101,6 +101,40 @@ exports.addCourse = async (req, res) => {
     const course = new Course(req.body);
     await course.save();
     res.send(course);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.updateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const payload = req.body;
+    const updateCourse = await Course.findByIdAndUpdate(id, payload, {
+      new: true,
+    });
+    if (!updateCourse) return res.status(404).send("Course not found");
+    res.send(updateCourse);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.deleteCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteCourse = await Course.findByIdAndDelete(id);
+    if (!deleteCourse) return res.status(404).send("Course not found");
+    res.sendStatus(200);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.send(users);
   } catch (error) {
     res.sendStatus(500);
   }
