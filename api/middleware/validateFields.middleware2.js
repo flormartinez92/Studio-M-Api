@@ -28,4 +28,20 @@ const validateFields = (req, res, next) => {
   next();
 };
 
-module.exports = { validateFields, validateCourse };
+const validateDeleteCoupon = [check("id", "id is not type mongo").isMongoId()];
+
+const validateCoupon = [
+  check("couponTitle", "Coupon title is required").not().isEmpty(),
+  check("couponDescription", "Coupon Description is required").not().isEmpty(),
+  check("couponCode", "Coupon Code is required").not().isEmpty(),
+  check("startDate", "Start Date is required").not().isEmpty(),
+  check("endDate", "End Date is required").not().isEmpty(),
+  check("discountCoupon", "Discount Coupon is required").not().isEmpty(),
+];
+
+module.exports = {
+  validateFields,
+  validateCourse,
+  validateDeleteCoupon,
+  validateCoupon,
+};
