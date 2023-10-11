@@ -31,8 +31,6 @@ const validateFields = (req, res, next) => {
 const validateDeleteCoupon = [check("id", "id is not type mongo").isMongoId()];
 
 const validateCoupon = [
-  check("couponTitle", "Coupon title is required").not().isEmpty(),
-  check("couponDescription", "Coupon Description is required").not().isEmpty(),
   check("couponCode", "Coupon Code is required").not().isEmpty(),
   check("startDate", "Start Date is required").not().isEmpty(),
   check("endDate", "End Date is required").not().isEmpty(),

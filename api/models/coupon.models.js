@@ -1,14 +1,6 @@
 const { Schema, model } = require("mongoose");
 
 const CouponSchema = new Schema({
-  couponTitle: {
-    type: String,
-    required: [true, "Coupon Title is required"],
-  },
-  couponDescription: {
-    type: String,
-    required: [true, "Coupon Description is required"],
-  },
   couponCode: {
     type: String,
     unique: true,
@@ -21,10 +13,6 @@ const CouponSchema = new Schema({
   endDate: {
     type: Date,
     required: [true, "End Date is required"],
-  },
-  quantityAvailable: {
-    type: Number,
-    default: 1,
   },
   discountCoupon: {
     type: Number,
