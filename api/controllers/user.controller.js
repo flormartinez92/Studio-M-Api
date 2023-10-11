@@ -185,7 +185,7 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.userAllCourses = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.params;
 
   try {
     const user = await User.findById(userId);
@@ -193,8 +193,7 @@ exports.userAllCourses = async (req, res) => {
 
     const coursesId = user.course;
     const coursesInfo = await Course.find({ _id: { $in: coursesId } });
-    if (!coursesId)
-      return res.status(404).send("no courses found for this user");
+    if (!coursesId) return res.status(200).send([]);
 
     res.status(200).send(coursesInfo);
   } catch (error) {
