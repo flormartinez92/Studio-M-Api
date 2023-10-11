@@ -106,7 +106,6 @@ exports.oneCourse = async (req, res) => {
   }
 };
 
-
 // Ruta para poner el mail y que te envien un correo con un link de recuperacion de contraseña.
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;
@@ -180,6 +179,24 @@ exports.resetPassword = async (req, res) => {
     await passwordResetToken.deleteOne();
 
     res.status(200).send("Password reset was successful");
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.userAllCourses = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("user not found");
+
+    const coursesId = user.course;
+    const coursesInfo = await Course.find({ _id: { $in: coursesId } });
+    if (!coursesId)
+      return res.status(404).send("no courses found for this user");
+
+    res.status(200).send(coursesInfo);
   } catch (error) {
     res.sendStatus(500);
   }

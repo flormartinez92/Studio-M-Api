@@ -10,6 +10,7 @@ const {
   oneCourse,
   forgotPassword,
   resetPassword,
+  userAllCourses,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -106,5 +107,8 @@ router.post(
   ],
   resetPassword
 );
+
+//Ruta para obtener los cursos comprados por un usuario en particular
+router.get("/purchasedCourse", userAllCourses);
 
 module.exports = router;
