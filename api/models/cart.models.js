@@ -15,7 +15,7 @@ const CartSchema = new Schema({
   ],
   price: {
     type: Number,
-    required: [true, "Price is required"],
+    required: [false, "Price is required"],
   },
   date: {
     type: Date,
