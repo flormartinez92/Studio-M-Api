@@ -11,8 +11,8 @@ const add = async (req, res) => {
     const courseFound = await Course.findById(courseId).exec();
 
     if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
-
-    const cart = await Cart.findOne({user: userId}).exec();
+console.log("111111111111111111111111111111111111111");
+    let cart = await Cart.findOne({user: userId}).exec();
 
     if(!cart) {
       cart = new Cart({user: userId, course: [courseFound._id]});
