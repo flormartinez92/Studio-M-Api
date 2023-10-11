@@ -5,12 +5,7 @@ const { check } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
 
 // Agrear Curso al carrito de compra
-router.post("/add/:courseId/:userId", 
-[
-  check("user", "User is required").not().isEmpty(),
-  check("course", "Course is required").not().isEmpty(),
-  validateFields
-], cartController.add)
+router.post("/add/:courseId/:userId", cartController.add)
 
 // Eliminar producto de carrito de compra
 router.delete("/remove/:courseId/:userId",
