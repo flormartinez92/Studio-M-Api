@@ -11,7 +11,7 @@ const add = async (req, res) => {
     const courseFound = await Course.findById(courseId).exec();
 
     if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
-console.log("111111111111111111111111111111111111111");
+    
     let cart = await Cart.findOne({user: userId}).exec();
 
     if(!cart) {
@@ -36,7 +36,7 @@ console.log("111111111111111111111111111111111111111");
 // Eliminar producto de carrito de compra
 const remove = async (req, res) => {
   const { courseId, userId } = req.params;
-
+  
   try {
     const userFound = await User.findById(userId).exec();
     const courseFound = await Course.findById(courseId).exec();
