@@ -8,7 +8,9 @@ const add = async (req, res) => {
 
   try {
     const userFound = await User.findById(userId).exec();
+    console.log("USER NOT FOUND", userFound);
     const courseFound = await Course.findById(courseId).exec();
+    console.log();
 
     if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
     
