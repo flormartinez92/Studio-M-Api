@@ -109,6 +109,6 @@ router.post(
 );
 
 //Ruta para obtener los cursos comprados por un usuario en particular
-router.get("/purchasedCourse", userAllCourses);
+router.get("/:userId/purchasedCourse", userAllCourses);
 
 module.exports = router;
