@@ -202,19 +202,35 @@ exports.userAllCourses = async (req, res) => {
   }
 };
 
-exports.userCart = async (req, res)=> {
+exports.userCart = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const cart = await Cart.findOne({user: userId});
+    const cart = await Cart.findOne({ user: userId });
 
-    if(!cart) return res.status(400).send([]);
+    if (!cart) return res.status(400).send([]);
 
     const coursesCartID = cart.course;
     const coursesInfo = await Course.find({ _id: { $in: coursesCartID } });
-    if(!coursesInfo) return res.status(400).send("Course info not found");
-    
+    if (!coursesInfo) return res.status(400).send("Course info not found");
+
     res.status(200).send(coursesInfo);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//ruta para devolver los datos del usuario
+exports.userData = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
   }
