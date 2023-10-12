@@ -7,6 +7,7 @@ const Token = require("../models/token.models");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
+const Cart = require("../models/cart.models");
 
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
@@ -198,5 +199,23 @@ exports.userAllCourses = async (req, res) => {
     res.status(200).send(coursesInfo);
   } catch (error) {
     res.sendStatus(500);
+  }
+};
+
+exports.userCart = async (req, res)=> {
+  const { userId } = req.params;
+
+  try {
+    const cart = await Cart.findOne({user: userId});
+
+    if(!cart) return res.status(400).send([]);
+
+    const coursesCartID = cart.course;
+    const coursesInfo = await Course.find({ _id: { $in: coursesCartID } });
+    if(!coursesInfo) return res.status(400).send("Course info not found");
+    
+    res.status(200).send(coursesInfo);
+  } catch (error) {
+    console.error(error);
   }
 };
