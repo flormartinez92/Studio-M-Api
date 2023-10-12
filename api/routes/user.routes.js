@@ -12,6 +12,7 @@ const {
   resetPassword,
   userAllCourses,
   userCart,
+  userData,
 } = require("../controllers/user.controller");
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -45,6 +46,8 @@ router.post(
   ],
   loginUser
 );
+
+router.get("/:userId", userData);
 
 router.get("/me", validateUser, userPersistent);
 
@@ -112,6 +115,6 @@ router.post(
 //Ruta para obtener los cursos comprados por un usuario en particular
 router.get("/:userId/purchasedCourse", userAllCourses);
 
-router.get("/cart/:userId", userCart)
+router.get("/cart/:userId", userCart);
 
 module.exports = router;
