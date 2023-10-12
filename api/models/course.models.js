@@ -45,6 +45,10 @@ const CourseSchema = new Schema({
     type: String,
     required: [true, "Course description is required"],
   },
+  coursePrice: {
+    type: String,
+    required: [true, "Price is required"],
+  },
   courseImg_url: {
     type: String,
     required: [true, "url is required"],
