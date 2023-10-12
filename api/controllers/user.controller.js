@@ -106,7 +106,6 @@ exports.oneCourse = async (req, res) => {
   }
 };
 
-
 // Ruta para poner el mail y que te envien un correo con un link de recuperacion de contraseña.
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;
@@ -142,7 +141,7 @@ exports.forgotPassword = async (req, res) => {
       },
       `./template/requestResetPassword.handlebars`
     );
-    res.sendStatus(200);
+    res.status(200).send(link);
   } catch (error) {
     res.sendStatus(500);
   }
