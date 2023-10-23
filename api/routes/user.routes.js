@@ -1,23 +1,21 @@
 const express = require("express");
-const {
-  loginUser,
-  addUser,
-  userPersistent,
-  logout,
-  updateUser,
-  deleteUser,
-  allCourses,
-  oneCourse,
-  forgotPassword,
-  resetPassword,
-  userAllCourses,
-  userCart,
-  userData,
-} = require("../controllers/user.controller");
+const router = express.Router();
 const { check, body } = require("express-validator");
 const validateFields = require("../middleware/validateFields.middleware");
 const { validateUser } = require("../middleware/auth.middleware");
-const router = express.Router();
+const {
+  addUser,
+  loginUser,
+  userPersistent,
+  userCart,
+  logout,
+  updateUser,
+  forgotPassword,
+  deleteUser,
+  resetPassword,
+  userCourses,
+  userData,
+} = require("../controllers/user.controller");
 
 router.post(
   "/add",
@@ -46,8 +44,6 @@ router.post(
   ],
   loginUser
 );
-
-router.get("/:userId", userData);
 
 router.get("/me", validateUser, userPersistent);
 
@@ -84,10 +80,6 @@ router.put(
 
 router.delete("/:userId", deleteUser);
 
-router.get("/allCourses", allCourses);
-
-router.get("/allCourses/:courseId", oneCourse);
-
 router.post(
   "/forgot",
   [
@@ -113,8 +105,11 @@ router.post(
 );
 
 //Ruta para obtener los cursos comprados por un usuario en particular
-router.get("/:userId/purchasedCourse", userAllCourses);
 
 router.get("/cart/:userId", userCart);
+
+router.get("/:userId/purchasedCourse", userCourses);
+
+router.get("/:userId", userData);
 
 module.exports = router;

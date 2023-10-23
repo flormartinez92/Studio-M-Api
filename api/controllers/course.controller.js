@@ -2,7 +2,16 @@ const Course = require("../models/course.models");
 const User = require("../models/user.models");
 const Project = require("../models/project.models");
 const Coupon = require("../models/coupon.models");
-const mongoose = require("mongoose");
+
+exports.allCourses = async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.send(courses);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+};
 
 //rutas de marcos
 //Ver todos los proyectos
@@ -137,5 +146,18 @@ exports.getUsers = async (req, res) => {
     res.send(users);
   } catch (error) {
     res.sendStatus(500);
+  }
+};
+
+exports.oneCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.sendStatus(404);
+    }
+    res.send(course);
+  } catch (error) {
+    console.error(error);
   }
 };

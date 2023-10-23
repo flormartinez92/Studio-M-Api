@@ -15,11 +15,12 @@ const {
   createCoupon,
   deleteCoupon,
   updateCoupon,
-
   addCourse,
   updateCourse,
   deleteCourse,
   getUsers,
+  oneCourse,
+  allCourses,
 } = require("../controllers/course.controller");
 
 const router = express.Router();
@@ -53,5 +54,9 @@ router.delete(
   deleteCourse
 );
 router.get("/", getUsers);
+
+router.get("/all-courses", allCourses);
+
+router.get("/all-courses/:courseId", oneCourse);
 
 module.exports = router;

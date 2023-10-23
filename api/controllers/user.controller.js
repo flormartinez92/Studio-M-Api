@@ -84,29 +84,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.allCourses = async (req, res) => {
-  try {
-    const courses = await Course.find();
-    res.send({ courses });
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-};
-
-exports.oneCourse = async (req, res) => {
-  try {
-    const { courseId } = req.params;
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.sendStatus(404);
-    }
-    res.send({ course });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 // Ruta para poner el mail y que te envien un correo con un link de recuperacion de contraseña.
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;
@@ -185,7 +162,7 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-exports.userAllCourses = async (req, res) => {
+exports.userCourses = async (req, res) => {
   const { userId } = req.params;
 
   try {

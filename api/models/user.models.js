@@ -5,8 +5,8 @@ const UserSchema = new Schema({
   course: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Course",
       required: [true, "Course is required"],
+      ref: "Course",
     },
   ],
   name: {
