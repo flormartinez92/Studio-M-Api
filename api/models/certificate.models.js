@@ -1,12 +1,23 @@
 const { Schema, model } = require("mongoose");
 
-const CouponSchema = new Schema({
-  couponTitle: {
+const CertificateSchema = new Schema({
+  description: {
     type: String,
-    required: [true, "Coupon Title is required"],
+    required: [false /* , "description is required" */],
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  courseId: [
+    {
+      type: Schema.Types.ObjectId,
+      required: [true, "Course is required"],
+      ref: "Course",
+    },
+  ],
 });
 
-const Coupon = model("Coupon", CouponSchema);
+const Certificate = model("Certificate", CertificateSchema);
 
-module.exports = Coupon;
+module.exports = Certificate;

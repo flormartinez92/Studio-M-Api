@@ -2,13 +2,6 @@ const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const UserSchema = new Schema({
-  course: [
-    {
-      type: Schema.Types.ObjectId,
-      required: [true, "Course is required"],
-      ref: "Course",
-    },
-  ],
   name: {
     type: String,
     required: [true, "Name is required"],
@@ -41,6 +34,20 @@ const UserSchema = new Schema({
     type: String,
     required: [false],
   },
+  course: [
+    {
+      type: Schema.Types.ObjectId,
+      required: [true, "Course is required"],
+      ref: "Course",
+    },
+  ],
+  certificate: [
+    {
+      type: Schema.Types.ObjectId,
+      required: [true, "Certificate is required"],
+      ref: "Certificate",
+    },
+  ],
 });
 
 UserSchema.methods.validatorPassword = async function (password) {

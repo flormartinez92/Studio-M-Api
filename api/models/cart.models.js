@@ -1,26 +1,29 @@
 const { Schema, model, SchemaType } = require("mongoose");
 
 const CartSchema = new Schema({
-  user: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: [true, "User is required"],
   },
-  course: [
+  courseId: [
     {
       type: Schema.Types.ObjectId,
       ref: "Course",
       required: [true, "Course is required"],
     },
   ],
-  price: {
+  totalAmount: {
     type: Number,
     required: [true, "Price is required"],
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
+  couponDiscount: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Coupon",
+      required: [true, "Coupon discount is required"],
+    },
+  ],
 });
 
 const Cart = model("Cart", CartSchema);
