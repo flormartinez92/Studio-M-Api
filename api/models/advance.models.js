@@ -1,6 +1,20 @@
 const { Schema, model } = require("mongoose");
+/*sd  */
+const classAdvance = new Schema({
+  classId: [
+    {
+      type: Schema.Types.ObjectId,
+      required: [true, "classId is required"],
+      ref: "Course",
+    },
+  ],
+  status: {
+    type: Boolean,
+    required: [true, "status is required"],
+  },
+});
 
-const AdvanceSchema = new Schema({
+const CourseAdvanceSchema = new Schema({
   userId: [
     {
       type: Schema.Types.ObjectId,
@@ -8,8 +22,12 @@ const AdvanceSchema = new Schema({
       ref: "User",
     },
   ],
+  classesAdvance: {
+    type: [classAdvance],
+    required: [true, "class Advance is required"],
+  },
 });
 
-const Advance = model("Advance", AdvanceSchema);
+const CourseAdvance = model("CourseAdvance", CourseAdvanceSchema);
 
-module.exports = Advance;
+module.exports = CourseAdvance;
