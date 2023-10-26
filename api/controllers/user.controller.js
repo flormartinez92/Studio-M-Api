@@ -1,13 +1,15 @@
-const User = require("../models/user.models");
+//const User = require("../models/user.models");
+
 const Course = require("../models/course.models");
+const { User, Token, Cart } = require("../models");
 
 const { generateToken } = require("../config/token");
 
-const Token = require("../models/token.models");
+/* const Token = require("../models/token.models"); */
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
-const Cart = require("../models/cart.models");
+/* const Cart = require("../models/cart.models"); */
 
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
