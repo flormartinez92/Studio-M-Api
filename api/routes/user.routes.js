@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { check, body } = require("express-validator");
-const validateFields = require("../middleware/validateFields.middleware");
 const { validateUser } = require("../middleware/auth.middleware");
 const {
   addUser,
   loginUser,
-  userPersistent,
+  userPersistence,
   userCart,
   logout,
   updateUser,
@@ -16,39 +15,42 @@ const {
   userCourses,
   userData,
 } = require("../controllers/user.controller");
+const {
+  validateFields,
+  validateRegister,
+  validateLogin,
+  validateForgotPassword,
+  validateResetPassword,
+} = require("../middleware/validateFields.middleware2");
 
-router.post(
-  "/add",
-  [
-    check("name", "Name is required").not().isEmpty(),
-    check("lastname", "Last name is required").not().isEmpty(),
-    check("dni", "Dni is required").not().isEmpty(),
-    check("mail", "Email is required").not().isEmpty(),
-    check("password", "Password is required").not().isEmpty(),
-    check("password", "The password must be at least 4 characters").isLength({
-      min: 4,
-    }),
-    check("mail", "The email is not valid").isEmail(),
-    validateFields,
-  ],
-  addUser
-);
+// RUTAS DEL USUARIO
 
-router.post(
-  "/login",
-  [
-    check("mail", "Email is required").not().isEmpty(),
-    check("mail", "The email is not valid").isEmail(),
-    check("password", "Password is required").not().isEmpty(),
-    validateFields,
-  ],
-  loginUser
-);
+// Register
+router.post("/add", validateRegister, validateFields, addUser);
 
-router.get("/me", validateUser, userPersistent);
+// Login
+router.post("/login", validateLogin, validateFields, loginUser);
 
+// Persistence
+router.get("/me", validateUser, userPersistence);
+
+// Logout
 router.post("/logout", logout);
 
+// ForgotPassword
+router.post("/forgot", validateForgotPassword, validateFields, forgotPassword);
+
+// ResetPassword
+router.post(
+  "/resetPassword",
+  validateResetPassword,
+  validateFields,
+  resetPassword
+);
+
+// RUTAS QUE QUEDAN POR CHEQUEAR
+
+// Update (Esto hay que verlo porque vamos a usar Cloudinary)
 router.put(
   "/update/:userId",
   [
@@ -78,31 +80,8 @@ router.put(
   updateUser
 );
 
+// Esta ruta deberia ser del administrador
 router.delete("/:userId", deleteUser);
-
-router.post(
-  "/forgot",
-  [
-    check("mail", "Email is required").not().isEmpty(),
-    check("mail", "The email is not valid").isEmail(),
-    validateFields,
-  ],
-  forgotPassword
-);
-
-router.post(
-  "/resetPassword",
-  [
-    body("userId").isMongoId().withMessage("Invalid userId format"),
-    body("token").notEmpty().withMessage("Token is required"),
-    check("password", "Password is required").not().isEmpty(),
-    check("password", "The password must be at least 4 characters").isLength({
-      min: 4,
-    }),
-    validateFields,
-  ],
-  resetPassword
-);
 
 //Ruta para obtener los cursos comprados por un usuario en particular
 

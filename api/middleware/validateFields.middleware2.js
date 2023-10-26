@@ -1,5 +1,11 @@
-const { validationResult, check } = require("express-validator");
+const { validationResult, check, body } = require("express-validator");
 const { default: mongoose } = require("mongoose");
+
+const validateFields = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).send(errors);
+  next();
+};
 
 const validateCourse = [
   check("courseTitle", "Course title is required").not().isEmpty(),
@@ -22,11 +28,47 @@ const validateCourse = [
     .isEmpty(),
 ];
 
-const validateFields = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).send(errors);
-  next();
-};
+const validateRegister = [
+  check("name", "Name is required").not().isEmpty(),
+  check("lastname", "Last name is required").not().isEmpty(),
+  check("dni", "Dni is required").not().isEmpty(),
+  check("mail", "Email is required").not().isEmpty(),
+  check("password", "Password is required").not().isEmpty(),
+  check(
+    "password",
+    "The password must be at least 8 characters, contain at least one uppercase, contain at least one lower case, contain at least one number."
+  )
+    .isLength({
+      min: 8,
+    })
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
+  check("mail", "The email is not valid").isEmail(),
+];
+
+const validateLogin = [
+  check("mail", "Email is required").not().isEmpty(),
+  check("mail", "The email is not valid").isEmail(),
+  check("password", "Password is required").not().isEmpty(),
+];
+
+const validateForgotPassword = [
+  check("mail", "Email is required").not().isEmpty(),
+  check("mail", "The email is not valid").isEmail(),
+];
+
+const validateResetPassword = [
+  body("userId").isMongoId().withMessage("Invalid userId format"),
+  body("token").notEmpty().withMessage("Token is required"),
+  check("password", "Password is required").not().isEmpty(),
+  check(
+    "password",
+    "The password must be at least 8 characters, contain at least one uppercase, contain at least one lower case, contain at least one number."
+  )
+    .isLength({
+      min: 8,
+    })
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
+];
 
 const validateDeleteCoupon = [check("id", "id is not type mongo").isMongoId()];
 
@@ -42,4 +84,8 @@ module.exports = {
   validateCourse,
   validateDeleteCoupon,
   validateCoupon,
+  validateRegister,
+  validateLogin,
+  validateForgotPassword,
+  validateResetPassword,
 };
