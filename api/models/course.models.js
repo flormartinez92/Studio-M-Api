@@ -49,15 +49,27 @@ const CourseSchema = new Schema({
     type: String,
     required: [true, "Price is required"],
   },
+  courseLevel: {
+    type: String,
+    required: [true, "Level is required"],
+  },
+  courseDuration: {
+    type: String,
+    required: [true, "Duration is required"],
+  },
   courseImg_url: {
     type: String,
     required: [true, "url is required"],
+  },
+  status: {
+    type: Boolean,
+    default: true,
   },
   modules: {
     type: [moduleSchema],
     required: [true, "Modules is required"],
   },
-  projects: {
+  projectsTitle: {
     type: String,
     required: [true, "Projects is required"],
   },
@@ -65,9 +77,9 @@ const CourseSchema = new Schema({
     type: String,
     required: [true, "Projects description is required"],
   },
-  completedCourse: {
+  projectAim: {
     type: String,
-    required: [true, "Completed description is required"],
+    required: [true, "Project Aim is required"],
   },
 });
 

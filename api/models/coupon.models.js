@@ -18,6 +18,10 @@ const CouponSchema = new Schema({
     type: Number,
     required: [true, "Discount coupon is required"],
   },
+  status: {
+    type: Boolean,
+    required: [true, "Status coupon is required"],
+  },
 });
 
 const Coupon = model("Coupon", CouponSchema);
