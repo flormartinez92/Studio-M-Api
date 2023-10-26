@@ -16,12 +16,12 @@ const {
   userData,
 } = require("../controllers/user.controller");
 const {
-  validateFields,
   validateRegister,
   validateLogin,
   validateForgotPassword,
   validateResetPassword,
-} = require("../middleware/validateFields.middleware2");
+} = require("../middleware/userValidations.middleware");
+const validateFields = require("../middleware/validateFields.middleware");
 
 // RUTAS DEL USUARIO
 
