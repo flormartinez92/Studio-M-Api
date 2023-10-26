@@ -41,7 +41,7 @@ exports.addUser = async (req, res) => {
   }
 };
 
-exports.userPersistent = (req, res) => {
+exports.userPersistence = (req, res) => {
   res.send(req.user);
 };
 
@@ -50,6 +50,7 @@ exports.logout = (req, res) => {
   res.sendStatus(204);
 };
 
+// Este controlador hay que verlo cuando definamos lo de cloudinary
 exports.updateUser = async (req, res) => {
   const { userId } = req.params;
   const { name, lastname, dni, password, profileImg } = req.body;
@@ -72,6 +73,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+// Esta ruta deberia ser del administrador
 exports.deleteUser = async (req, res) => {
   const { userId } = req.params;
 

@@ -1,5 +1,4 @@
-const { validationResult, check } = require("express-validator");
-const { default: mongoose } = require("mongoose");
+const { check } = require("express-validator");
 
 const validateCourse = [
   check("courseTitle", "Course title is required").not().isEmpty(),
@@ -22,24 +21,4 @@ const validateCourse = [
     .isEmpty(),
 ];
 
-const validateFields = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).send(errors);
-  next();
-};
-
-const validateDeleteCoupon = [check("id", "id is not type mongo").isMongoId()];
-
-const validateCoupon = [
-  check("couponCode", "Coupon Code is required").not().isEmpty(),
-  check("startDate", "Start Date is required").not().isEmpty(),
-  check("endDate", "End Date is required").not().isEmpty(),
-  check("discountCoupon", "Discount Coupon is required").not().isEmpty(),
-];
-
-module.exports = {
-  validateFields,
-  validateCourse,
-  validateDeleteCoupon,
-  validateCoupon,
-};
+module.exports = { validateCourse };
