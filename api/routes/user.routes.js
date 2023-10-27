@@ -20,6 +20,7 @@ const {
   validateLogin,
   validateForgotPassword,
   validateResetPassword,
+  validateMongoID,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 
@@ -79,16 +80,15 @@ router.put(
   ],
   updateUser
 );
+//RUTA QUE TRAE LA INFO DEL USUARIO
+router.get("/:userId", validateMongoID, validateFields, userData);
 
 // Esta ruta deberia ser del administrador
-router.delete("/:userId", deleteUser);
 
 //Ruta para obtener los cursos comprados por un usuario en particular
 
-router.get("/cart/:userId", userCart);
+/* router.get("/cart/:userId", userCart);
 
-router.get("/:userId/purchasedCourse", userCourses);
-
-router.get("/:userId", userData);
+router.get("/:userId/purchasedCourse", userCourses); */
 
 module.exports = router;

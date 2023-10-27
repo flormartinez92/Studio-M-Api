@@ -16,7 +16,7 @@ const validateRegister = [
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
   check("mail", "The email is not valid").isEmail(),
 ];
-
+const validateMongoID = [check("userId", "id is not type mongo").isMongoId()];
 const validateLogin = [
   check("mail", "Email is required").not().isEmpty(),
   check("mail", "The email is not valid").isEmail(),
@@ -47,4 +47,5 @@ module.exports = {
   validateLogin,
   validateForgotPassword,
   validateResetPassword,
+  validateMongoID,
 };

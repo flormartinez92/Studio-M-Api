@@ -197,7 +197,7 @@ exports.userCart = async (req, res) => {
 
     res.status(200).send(coursesInfo);
   } catch (error) {
-    console.error(error);
+    res.sendStatus(500);
   }
 };
 
@@ -208,11 +208,11 @@ exports.userData = async (req, res) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "user not found" });
+      return res.status(404).send("user not found");
     }
 
-    res.status(200).json(user);
+    res.status(200).send(user);
   } catch (error) {
-    console.error(error);
+    res.sendStatus(500);
   }
 };
