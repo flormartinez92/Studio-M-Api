@@ -6,12 +6,28 @@ const Coupon = require("../models/coupon.models");
 exports.allCourses = async (req, res) => {
   try {
     const courses = await Course.find({ status: true });
-    res.send(courses);
+    if (!courses) return res.status(404).send("Courses not found");
+    res.status(200).send(courses);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
   }
 };
+
+exports.oneCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const course = await Course.findById(id);
+    if (!course) return res.status(404).send("Course not found");
+
+    res.status(200).send(course);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// LAS RUTAS DE ABAJO DEBERIAN ESTAR EN COUPON ROUTES Y PROJECT ROUTES
 
 //rutas de marcos
 //Ver todos los proyectos
@@ -101,54 +117,5 @@ exports.updateCoupon = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
-  }
-};
-
-//rutas de ivan
-exports.addCourse = async (req, res) => {
-  try {
-    const course = new Course(req.body);
-    await course.save();
-    res.send(course);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
-exports.updateCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const payload = req.body;
-    const updateCourse = await Course.findByIdAndUpdate(id, payload, {
-      new: true,
-    });
-    if (!updateCourse) return res.status(404).send("Course not found");
-    res.send(updateCourse);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
-exports.deleteCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleteCourse = await Course.findByIdAndDelete(id);
-    if (!deleteCourse) return res.status(404).send("Course not found");
-    res.sendStatus(200);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
-exports.oneCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const course = await Course.findById(id);
-    if (!course) {
-      return res.sendStatus(404);
-    }
-    res.send(course);
-  } catch (error) {
-    console.error(error);
   }
 };

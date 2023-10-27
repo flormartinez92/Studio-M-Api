@@ -1,15 +1,8 @@
-//const User = require("../models/user.models");
-
-const Course = require("../models/course.models");
-const { User, Token, Cart } = require("../models");
-
+const { User, Token, Course } = require("../models");
 const { generateToken } = require("../config/token");
-
-/* const Token = require("../models/token.models"); */
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
-/* const Cart = require("../models/cart.models"); */
 
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
@@ -23,7 +16,7 @@ exports.loginUser = async (req, res) => {
 
     const token = generateToken({ name, lastname, mail });
     res.cookie("token", token);
-    res.send(user);
+    res.status(200).send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -37,7 +30,7 @@ exports.addUser = async (req, res) => {
 
     const user = new User(req.body);
     await user.save();
-    res.send(user);
+    res.status(201).send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -75,19 +68,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Esta ruta deberia ser del administrador
-exports.deleteUser = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const user = await User.findByIdAndDelete(userId);
-    if (!user) return res.status(404).send("User not found");
-    return res.status(200).send("User deleted successfully");
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
 // Ruta para poner el mail y que te envien un correo con un link de recuperacion de contraseña.
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;
@@ -96,14 +76,10 @@ exports.forgotPassword = async (req, res) => {
     const userMail = await User.findOne({ mail });
     if (!userMail) return res.status(404).send("user not found");
 
-    //  If the user exists, we check if there is an existing token that has been created for this user. If one exists, we delete the token.
     let token = await Token.findOne({ userId: userMail._id });
     if (token) await token.deleteOne();
 
-    // In this section of the code, a new random token is generated using the Node.js crypto API. This token will be sent to the user and can be used to reset their password.
     let resetToken = crypto.randomBytes(32).toString("hex");
-
-    // Now, create a hash of this token, which we’ll save in the database because saving plain resetToken in our database can open up vulnerabilities
     const hash = await bcrypt.hash(resetToken, 10);
 
     await new Token({
@@ -183,33 +159,13 @@ exports.userCourses = async (req, res) => {
   }
 };
 
-exports.userCart = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const cart = await Cart.findOne({ user: userId });
-
-    if (!cart) return res.status(400).send([]);
-
-    const coursesCartID = cart.course;
-    const coursesInfo = await Course.find({ _id: { $in: coursesCartID } });
-    if (!coursesInfo) return res.status(400).send("Course info not found");
-
-    res.status(200).send(coursesInfo);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
 //ruta para devolver los datos del usuario
 exports.userData = async (req, res) => {
   const { userId } = req.params;
 
   try {
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).send("user not found");
-    }
+    if (!user) return res.status(404).send("user not found");
 
     res.status(200).send(user);
   } catch (error) {
