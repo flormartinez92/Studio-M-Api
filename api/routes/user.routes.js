@@ -42,12 +42,13 @@ router.post("/logout", logout);
 router.post("/forgot", validateForgotPassword, validateFields, forgotPassword);
 
 // ResetPassword
-router.post(
-  "/resetPassword",
-  validateResetPassword,
-  validateFields,
-  resetPassword
-);
+router.post("/resetPassword", validateResetPassword, validateFields, resetPassword);
+
+//Ruta que trae la informacion del usuario
+router.get("/:userId", validateMongoID, validateFields, userData);
+
+//Ruta para traer los cursos comprados por un usuario
+router.get("/:userId/courses", validateMongoID, userCourses);
 
 // RUTAS QUE QUEDAN POR CHEQUEAR
 
@@ -80,15 +81,9 @@ router.put(
   ],
   updateUser
 );
-//RUTA QUE TRAE LA INFO DEL USUARIO
-router.get("/:userId", validateMongoID, validateFields, userData);
 
 // Esta ruta deberia ser del administrador
 
-//Ruta para obtener los cursos comprados por un usuario en particular
-
-/* router.get("/cart/:userId", userCart);
-
-router.get("/:userId/purchasedCourse", userCourses); */
+//router.get("/:userId/purchasedCourse", userCourses);
 
 module.exports = router;
