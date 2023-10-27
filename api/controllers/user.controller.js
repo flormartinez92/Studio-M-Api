@@ -1,4 +1,4 @@
-const { User, Token, Cart, Course } = require("../models");
+const { User, Token, Course } = require("../models");
 const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
@@ -16,7 +16,7 @@ exports.loginUser = async (req, res) => {
 
     const token = generateToken({ name, lastname, mail });
     res.cookie("token", token);
-    res.send(user);
+    res.status(200).send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -30,7 +30,7 @@ exports.addUser = async (req, res) => {
 
     const user = new User(req.body);
     await user.save();
-    res.send(user);
+    res.status(201).send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -159,33 +159,13 @@ exports.userCourses = async (req, res) => {
   }
 };
 
-exports.userCart = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const cart = await Cart.findOne({ user: userId });
-
-    if (!cart) return res.status(400).send([]);
-
-    const coursesCartID = cart.course;
-    const coursesInfo = await Course.find({ _id: { $in: coursesCartID } });
-    if (!coursesInfo) return res.status(400).send("Course info not found");
-
-    res.status(200).send(coursesInfo);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
 //ruta para devolver los datos del usuario
 exports.userData = async (req, res) => {
   const { userId } = req.params;
 
   try {
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).send("user not found");
-    }
+    if (!user) return res.status(404).send("user not found");
 
     res.status(200).send(user);
   } catch (error) {

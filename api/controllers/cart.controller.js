@@ -6,10 +6,10 @@ const addCart = async (req, res) => {
 
   try {
     const user = await User.findById(userId);
-    if (!user) res.status(404).send("User not found");
+    if (!user) return res.status(404).send("User not found");
 
     const course = await Course.findById(courseId);
-    if (!course) res.status(404).send("Course not found");
+    if (!course) return res.status(404).send("Course not found");
 
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -29,32 +29,64 @@ const addCart = async (req, res) => {
   }
 };
 
-// Eliminar producto de carrito de compra
-const removeCart = async (req, res) => {
+// Eliminar de a un curso del carrito de compra
+const removeCourse = async (req, res) => {
   const { courseId, userId } = req.params;
 
   try {
-    const userFound = await User.findById(userId).exec();
-    const courseFound = await Course.findById(courseId).exec();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
 
-    if (!userFound || !courseFound)
-      res.status(400).json({ message: "User or course not found" });
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).send("Course not found");
 
-    const cart = await Cart.findOne({ user: userId }).exec();
+    let cart = await Cart.findOne({ userId });
 
-    if (!cart)
-      res.status(404).json({ message: "error trying to remove course" });
+    if (!cart) return res.status(404).send("Cart not found");
 
-    const updatedCourse = cart.course.filter(
-      (course_id) => !course_id.equals(courseFound._id)
+    const updatedCart = cart.courseId.filter(
+      (course_id) => !course_id.equals(course._id)
     );
-    cart.course = updatedCourse;
+    cart.courseId = updatedCart;
     await cart.save();
 
-    return res.status(200).json(cart);
+    res.status(200).send(cart);
   } catch (error) {
-    console.error(error);
-    res.status(401).json(error);
+    res.sendStatus(500);
+  }
+};
+
+// Eliminar todo el carrito
+const removeCart = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
+
+    let cart = await Cart.findOneAndRemove({ userId });
+    if (!cart) return res.status(404).send("Cart not found");
+
+    res.sendStatus(204);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// Ver los cursos que tengo en el carrito
+const cartCourses = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).send("Cart not found");
+
+    const courses = await Course.find({ _id: { $in: cart.courseId } });
+    if (!courses) return res.status(404).send("Courses not found");
+
+    res.status(200).send(courses);
+  } catch (error) {
+    res.sendStatus(500);
   }
 };
 
@@ -85,4 +117,10 @@ const confirmBuyCart = async (req, res) => {
   }
 };
 
-module.exports = { addCart, removeCart, confirmBuyCart };
+module.exports = {
+  addCart,
+  removeCourse,
+  removeCart,
+  cartCourses,
+  confirmBuyCart,
+};

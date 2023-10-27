@@ -6,11 +6,9 @@ const {
   addUser,
   loginUser,
   userPersistence,
-  userCart,
   logout,
   updateUser,
   forgotPassword,
-  deleteUser,
   resetPassword,
   userCourses,
   userData,
@@ -87,7 +85,7 @@ router.get("/:userId", validateMongoID, validateFields, userData);
 
 //Ruta para obtener los cursos comprados por un usuario en particular
 
-/* router.get("/cart/:userId", userCart);
+/* 
 
 router.get("/:userId/purchasedCourse", userCourses); */
 

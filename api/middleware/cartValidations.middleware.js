@@ -1,8 +1,8 @@
-const { body } = require("express-validator");
+const { check } = require("express-validator");
 
-const validateAddCart = [
-  body("userId", "userId is not MongoId format").isMongoId(),
-  body("courseId", "courseId is not MongoId format").isMongoId(),
+const validateIdsCart = [
+  check("userId", "userId is not MongoId format").isMongoId(),
+  check("courseId", "courseId is not MongoId format").isMongoId(),
 ];
 
-module.exports = validateAddCart;
+module.exports = validateIdsCart;
