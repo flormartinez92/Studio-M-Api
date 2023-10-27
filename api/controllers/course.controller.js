@@ -1,11 +1,11 @@
-const Course = require("../models/course.models");
+const { Course } = require("../models");
 const User = require("../models/user.models");
 const Project = require("../models/project.models");
 const Coupon = require("../models/coupon.models");
 
 exports.allCourses = async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.find({ status: true });
     res.send(courses);
   } catch (error) {
     console.error(error);
@@ -140,19 +140,10 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
-exports.getUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.send(users);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
 exports.oneCourse = async (req, res) => {
   try {
-    const { courseId } = req.params;
-    const course = await Course.findById(courseId);
+    const { id } = req.params;
+    const course = await Course.findById(id);
     if (!course) {
       return res.sendStatus(404);
     }
