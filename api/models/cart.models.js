@@ -18,13 +18,6 @@ const CartSchema = new Schema({
     type: Number,
     default: 0,
   },
-  couponDiscount: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Coupon",
-      required: [false],
-    },
-  ],
 });
 
 CartSchema.pre("save", async function (next) {
