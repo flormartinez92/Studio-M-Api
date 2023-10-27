@@ -6,21 +6,13 @@ const CouponSchema = new Schema({
     unique: true,
     required: [true, "Coupon Code is required"],
   },
-  startDate: {
-    type: Date,
-    required: [true, "Start Date is required"],
-  },
-  endDate: {
-    type: Date,
-    required: [true, "End Date is required"],
-  },
   discountCoupon: {
     type: Number,
     required: [true, "Discount coupon is required"],
   },
   status: {
     type: Boolean,
-    required: [true, "Status coupon is required"],
+    default: false,
   },
 });
 
