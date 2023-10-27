@@ -29,6 +29,11 @@ router.delete("/remove/:userId", validateMongoID, validateFields, removeCart);
 router.get("/courses/:userId", validateMongoID, validateFields, cartCourses);
 
 // Confirmacion de Compra
-router.post("/confirmBuy/:userId", confirmBuyCart);
+router.post(
+  "/confirmBuy/:userId",
+  validateMongoID,
+  validateFields,
+  confirmBuyCart
+);
 
 module.exports = router;

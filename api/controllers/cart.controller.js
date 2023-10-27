@@ -95,25 +95,21 @@ const confirmBuyCart = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const userFound = await User.findById(userId).exec();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("user not found");
 
-    if (!userFound) res.status(400).json({ message: "User not found" });
+    const cart = await Cart.findOne({ userId });
+    if (!cart) res.status(404).send("Cart not found");
 
-    const cart = await Cart.findOne({ user: userId }).exec();
+    const coursesToBuy = cart.courseId;
+    user.course.push(...coursesToBuy);
+    await user.save();
 
-    if (!cart) res.status(404).json({ message: "Cart not found" });
+    cart.deleteOne();
 
-    const coursesBought = cart.course;
-    userFound.course.push(...coursesBought);
-    await userFound.save();
-
-    cart.course = [];
-    cart.price = 0;
-    await cart.save();
-
-    return res.status(200).json({ message: "Purchase Confirmed" });
+    return res.status(200).send("Purchase Confirmed");
   } catch (error) {
-    console.error(error);
+    res.sendStatus(500);
   }
 };
 
