@@ -10,6 +10,7 @@ const {
 const validateIdsCart = require("../middleware/cartValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 const { validateMongoID } = require("../middleware/userValidations.middleware");
+const { Cart, User, Coupon } = require("../models");
 
 // Agrear Curso al carrito de compra
 router.post("/add", validateIdsCart, validateFields, addCart);
@@ -35,5 +36,36 @@ router.post(
   validateFields,
   confirmBuyCart
 );
+router.put("/addDiscount", async (req, res) => {
+  const { couponCode, mail } = req.body;
+  const user = await User.findOne({ mail });
+  const cart = await Cart.findOne({ userId: user._id });
 
+  const validateCoupon = await Coupon.findOne({
+    couponCode: couponCode.toUpperCase(),
+    status: true,
+  });
+
+  const cartDiscount = await Cart.findOneAndUpdate(
+    { userId: user._id },
+    { discount: validateCoupon.discountCoupon }
+  );
+  const totaldiscount =
+    cart.totalAmount - (cart.totalAmount * validateCoupon.discountCoupon) / 100;
+
+  const newCart = await Cart.findOneAndUpdate(
+    { _id: cart._id },
+    { totaldiscount: totaldiscount },
+    { new: true }
+  );
+  /* sd */
+  res.send(newCart);
+});
+
+/* 
+const newCart = await Cart.findOneAndUpdate(
+    { _id: "653fb5d31c7ec4f93d27a0ff" }, // Condiciones de búsqueda, aquí asumo que estás buscando por ID
+    { totaldiscount: 3000 }, // Actualización del campo
+    { new: true } // Opciones, aquí 'new' devuelve el documento actualizado
+  ); */
 module.exports = router;

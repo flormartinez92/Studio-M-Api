@@ -18,6 +18,14 @@ const CartSchema = new Schema({
     type: Number,
     default: 0,
   },
+  totaldiscount: {
+    type: Number,
+    default: 0,
+  },
+  discount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 CartSchema.pre("save", async function (next) {
