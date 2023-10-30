@@ -1,4 +1,4 @@
-const { Course, Coupon } = require("../models");
+const { Coupon } = require("../models");
 
 //crear un cupon
 exports.createCoupon = async (req, res) => {
@@ -22,22 +22,6 @@ exports.createCoupon = async (req, res) => {
   }
 };
 
-//eliminar un cupon
-/* exports.deleteCoupon = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const couponRemoved = await Coupon.findByIdAndDelete(id);
-    if (!couponRemoved) {
-      return res.status(404).json({ message: "error when deleting a coupon" });
-    }
-
-    res.status(200).json({ message: "coupon successfully deleted" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
-  }
-};
- */
 //actualizar un cupon
 exports.updateCoupon = async (req, res) => {
   const { couponId } = req.params;
@@ -59,6 +43,7 @@ exports.updateCoupon = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 exports.updateStatusCoupon = async (req, res) => {
   const { couponId } = req.params;
   const playload = req.body;
