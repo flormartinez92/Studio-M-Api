@@ -1,11 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const validateFields = require("../middleware/validateFields.middleware");
-
-const {
-  validateCourse,
-  validateMongoIdCourse,
-} = require("../middleware/courseValidations.middleware");
 const {
   createCoupon,
   updateCoupon,

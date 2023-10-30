@@ -18,7 +18,7 @@ const CartSchema = new Schema({
     type: Number,
     default: 0,
   },
-  totaldiscount: {
+  totalDiscount: {
     type: Number,
     default: 0,
   },

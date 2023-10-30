@@ -1,4 +1,4 @@
-const { Cart, User, Course } = require("../models");
+const { Cart, User, Course, Coupon } = require("../models");
 
 // Agrear Curso al carrito de compra
 const addCart = async (req, res) => {
@@ -113,10 +113,45 @@ const confirmBuyCart = async (req, res) => {
   }
 };
 
+// Agregar Descuento
+const addDiscount = async (req, res) => {
+  const { couponCode, mail } = req.body;
+
+  try {
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("user not found");
+
+    const cart = await Cart.findOne({ userId: user._id });
+    if (!cart) res.status(404).send("Cart not found");
+
+    const validateCoupon = await Coupon.findOne({
+      couponCode: couponCode.toUpperCase(),
+      status: true,
+    });
+    if (!validateCoupon) res.status(404).send("Coupon not found");
+
+    const totalDiscount =
+      cart.totalAmount -
+      (cart.totalAmount * validateCoupon.discountCoupon) / 100;
+
+    const newCart = await Cart.findOneAndUpdate(
+      { _id: cart._id },
+      { totalDiscount, discount: validateCoupon.discountCoupon },
+      { new: true }
+    );
+    if (!newCart) res.status(404).send("Couldn`t add discount");
+
+    res.status(200).send(newCart);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 module.exports = {
   addCart,
   removeCourse,
   removeCart,
   cartCourses,
   confirmBuyCart,
+  addDiscount,
 };
