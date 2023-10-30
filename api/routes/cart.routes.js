@@ -58,7 +58,7 @@ router.put("/addDiscount", async (req, res) => {
     { totaldiscount: totaldiscount },
     { new: true }
   );
-
+  /* sd */
   res.send(newCart);
 });
 
