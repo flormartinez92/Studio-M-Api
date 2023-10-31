@@ -14,23 +14,5 @@ router.get(
   validateFields,
   oneCourse
 );
-/* //rutas de marcos
-router.get("/projects", allProjects);
-
-router.put(
-  "/updateProject/:id",
-  [check("id", "id is not type mongo").isMongoId()],
-  updateProject
-);
-
-router.post("/addCoupon", validateCoupon, createCoupon);
-
-router.delete("/deleteCoupon/:id", validateDeleteCoupon, deleteCoupon);
-
-router.put(
-  "/updateCoupon/:id",
-  [check("id", "id is not type mongo").isMongoId()],
-  updateCoupon
-); */
 
 module.exports = router;

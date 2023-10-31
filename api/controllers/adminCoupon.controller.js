@@ -3,8 +3,8 @@ const { Coupon } = require("../models");
 //crear un cupon
 exports.createCoupon = async (req, res) => {
   const { couponCode, discountCoupon } = req.body;
+
   try {
-    //Verificacion de cupon
     const coupon = await Coupon.findOne({
       couponCode: couponCode.toUpperCase(),
     });
