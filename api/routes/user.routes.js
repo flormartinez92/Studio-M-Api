@@ -12,6 +12,9 @@ const {
   resetPassword,
   userCourses,
   userData,
+  updateCourseAdvance,
+  courseAdvance,
+  allCertificates,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -19,6 +22,8 @@ const {
   validateForgotPassword,
   validateResetPassword,
   validateMongoID,
+  validateUpdateCourseAdvance,
+  validateEmail,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 
@@ -47,7 +52,13 @@ router.post(
   resetPassword
 );
 
-// RUTAS QUE QUEDAN POR CHEQUEAR
+// Ruta para actualizar el estado de la clase
+router.put(
+  "/courseAdvance",
+  validateUpdateCourseAdvance,
+  validateFields,
+  updateCourseAdvance
+);
 
 // Update (Esto hay que verlo porque vamos a usar Cloudinary)
 router.put(
@@ -78,15 +89,13 @@ router.put(
   ],
   updateUser
 );
+
+router.get("/courseAdvance", validateEmail, validateFields, userCourses);
+
+// Ruta que me traiga los certificados del usuario
+router.get("/certificate", validateEmail, validateFields, allCertificates);
+
 //RUTA QUE TRAE LA INFO DEL USUARIO
 router.get("/:userId", validateMongoID, validateFields, userData);
-
-// Esta ruta deberia ser del administrador
-
-//Ruta para obtener los cursos comprados por un usuario en particular
-
-/* 
-
-router.get("/:userId/purchasedCourse", userCourses); */
 
 module.exports = router;

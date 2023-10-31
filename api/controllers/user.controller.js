@@ -1,4 +1,4 @@
-const { User, Token, Course } = require("../models");
+const { User, Token, Course, Certificate } = require("../models");
 const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
@@ -142,18 +142,34 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+// controlador que devuelve la info de los cursos de un usuario y su avance
 exports.userCourses = async (req, res) => {
-  const { userId } = req.params;
+  const { mail } = req.body;
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findOne({ mail });
     if (!user) return res.status(404).send("user not found");
 
-    const coursesId = user.course;
-    const coursesInfo = await Course.find({ _id: { $in: coursesId } });
-    if (!coursesId) return res.status(200).send([]);
+    const userCourses = user.course.map(async (userCourse) => {
+      const seenClasses = userCourse.classes.filter(
+        (viewClass) => viewClass.status == true
+      ).length;
 
-    res.status(200).send(coursesInfo);
+      const courseInfo = await Course.findById({ _id: userCourse.courseId });
+      if (!courseInfo) return res.status(404).send("Course not found");
+
+      const progress = Math.round(
+        (seenClasses / userCourse.classes.length) * 100
+      );
+
+      return {
+        courseInfo,
+        progress,
+      };
+    });
+
+    const courses = await Promise.all(userCourses);
+    res.status(200).send(courses);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -168,6 +184,59 @@ exports.userData = async (req, res) => {
     if (!user) return res.status(404).send("user not found");
 
     res.status(200).send(user);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// controlador para cambiar el estado de la clase
+exports.updateCourseAdvance = async (req, res) => {
+  const { mail, courseId, classId, status } = req.body;
+
+  try {
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("User not found");
+
+    const course = user.course.find((course) => course.courseId == courseId);
+    const classes = course.classes;
+    const oneClass = classes.find((one) => one.classId == classId);
+
+    oneClass.status = status;
+
+    await user.save();
+
+    res.send(user);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// controlador que me traiga los certificados de un usuario
+exports.allCertificates = async (req, res) => {
+  const { mail } = req.body;
+
+  try {
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("user not found");
+
+    const certificate = await Certificate.find({ userId: user._id })
+      .populate("courseId")
+      .populate("userId");
+
+    const certificateData = certificate.map((item) => {
+      const { userId, courseId, description, createdAt } = item;
+
+      return {
+        name: userId.name,
+        lastname: userId.lastname,
+        dni: userId.dni,
+        courseTitle: courseId.courseTitle,
+        description,
+        createdAt,
+      };
+    });
+
+    res.send(certificateData);
   } catch (error) {
     res.sendStatus(500);
   }

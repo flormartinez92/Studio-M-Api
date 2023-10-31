@@ -3,19 +3,22 @@ const { Schema, model } = require("mongoose");
 const CertificateSchema = new Schema({
   description: {
     type: String,
-    required: [false /* , "description is required" */],
+    required: [false],
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  courseId: [
-    {
-      type: Schema.Types.ObjectId,
-      required: [true, "Course is required"],
-      ref: "Course",
-    },
-  ],
+  courseId: {
+    type: Schema.Types.ObjectId,
+    required: [true, "Course is required"],
+    ref: "Course",
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: [true, "Course is required"],
+    ref: "User",
+  },
 });
 
 const Certificate = model("Certificate", CertificateSchema);
