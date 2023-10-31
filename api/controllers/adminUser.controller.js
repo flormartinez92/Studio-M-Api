@@ -16,7 +16,8 @@ exports.deleteUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.send(users);
+    if (!users) return res.status(404).send("Users not found");
+    res.status(200).send(users);
   } catch (error) {
     res.sendStatus(500);
   }

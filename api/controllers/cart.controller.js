@@ -1,91 +1,157 @@
-const Cart = require("../models/cart.models");
-const User = require("../models/user.models");
-const Course = require("../models/course.models");
+const { Cart, User, Course, Coupon } = require("../models");
 
 // Agrear Curso al carrito de compra
-const add = async (req, res) => {
-  const { courseId, userId } = req.params;
+const addCart = async (req, res) => {
+  const { courseId, userId } = req.body;
 
   try {
-    const userFound = await User.findById(userId).exec();
-    console.log("USER NOT FOUND", userFound);
-    const courseFound = await Course.findById(courseId).exec();
-    console.log();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
 
-    if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
-    
-    let cart = await Cart.findOne({user: userId}).exec();
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).send("Course not found");
 
-    if(!cart) {
-      cart = new Cart({user: userId, course: [courseFound._id]});
-    } else{
-      if(cart.course.includes(courseFound._id)){
-        return res.status(400).json({massage: "Course already in the cart"});
-      } else{
-        cart.course.push(courseFound._id);
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+      cart = new Cart({ userId, courseId: [course._id] });
+    } else {
+      if (!cart.courseId.includes(course._id)) {
+        cart.courseId.push(course._id);
+      } else {
+        return res.status(409).send("Course already in the cart");
       }
     }
 
     await cart.save();
-    return res.status(200).json(cart);
-    
+    res.status(200).send(cart);
   } catch (error) {
-      console.error(error);
-      res.status(401).json(error);
+    res.sendStatus(500);
   }
 };
 
-// Eliminar producto de carrito de compra
-const remove = async (req, res) => {
+// Eliminar de a un curso del carrito de compra
+const removeCourse = async (req, res) => {
   const { courseId, userId } = req.params;
-  
+
   try {
-    const userFound = await User.findById(userId).exec();
-    const courseFound = await Course.findById(courseId).exec();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
 
-    if(!userFound || !courseFound) res.status(400).json({ message: "User or course not found" });
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).send("Course not found");
 
-    const cart = await Cart.findOne({user: userId}).exec();
+    let cart = await Cart.findOne({ userId });
 
-    if(!cart) res.status(404).json({ message: "error trying to remove course"});
-    
-    const updatedCourse = cart.course.filter((course_id) => !course_id.equals(courseFound._id));
-    cart.course = updatedCourse;
+    if (!cart) return res.status(404).send("Cart not found");
+
+    const updatedCart = cart.courseId.filter(
+      (course_id) => !course_id.equals(course._id)
+    );
+    cart.courseId = updatedCart;
     await cart.save();
 
-    return res.status(200).json(cart);
-
+    res.status(200).send(cart);
   } catch (error) {
-    console.error(error);
-    res.status(401).json(error);
+    res.sendStatus(500);
+  }
+};
+
+// Eliminar todo el carrito
+const removeCart = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("User not found");
+
+    let cart = await Cart.findOneAndRemove({ userId });
+    if (!cart) return res.status(404).send("Cart not found");
+
+    res.sendStatus(204);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// Ver los cursos que tengo en el carrito
+const cartCourses = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).send("Cart not found");
+
+    const courses = await Course.find({ _id: { $in: cart.courseId } });
+    if (!courses) return res.status(404).send("Courses not found");
+
+    res.status(200).send(courses);
+  } catch (error) {
+    res.sendStatus(500);
   }
 };
 
 // Confirmacion de Compra
-const confirmBuy = async (req, res) => {
+const confirmBuyCart = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const userFound = await User.findById(userId).exec();
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("user not found");
 
-    if(!userFound) res.status(400).json({ message: "User not found" });
+    const cart = await Cart.findOne({ userId });
+    if (!cart) res.status(404).send("Cart not found");
 
-    const cart = await Cart.findOne({user: userId}).exec();
+    const coursesToBuy = cart.courseId;
+    user.course.push(...coursesToBuy);
+    await user.save();
 
-    if(!cart) res.status(404).json({ message: "Cart not found"});
+    cart.deleteOne();
 
-    const coursesBought = cart.course;
-    userFound.course.push(...coursesBought);
-    await userFound.save();
-
-    cart.course = [];
-    cart.price = 0;
-    await cart.save();
-
-    return res.status(200).json({ message: "Purchase Confirmed" });
+    return res.status(200).send("Purchase Confirmed");
   } catch (error) {
-    console.error(error);
+    res.sendStatus(500);
   }
 };
 
-module.exports = { add, remove, confirmBuy };
+// Agregar Descuento
+const addDiscount = async (req, res) => {
+  const { couponCode, mail } = req.body;
+
+  try {
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("user not found");
+
+    const cart = await Cart.findOne({ userId: user._id });
+    if (!cart) res.status(404).send("Cart not found");
+
+    const validateCoupon = await Coupon.findOne({
+      couponCode: couponCode.toUpperCase(),
+      status: true,
+    });
+    if (!validateCoupon) res.status(404).send("Coupon not found");
+
+    const totalDiscount =
+      cart.totalAmount -
+      (cart.totalAmount * validateCoupon.discountCoupon) / 100;
+
+    const newCart = await Cart.findOneAndUpdate(
+      { _id: cart._id },
+      { totalDiscount, discount: validateCoupon.discountCoupon },
+      { new: true }
+    );
+    if (!newCart) res.status(404).send("Couldn`t add discount");
+
+    res.status(200).send(newCart);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+module.exports = {
+  addCart,
+  removeCourse,
+  removeCart,
+  cartCourses,
+  confirmBuyCart,
+  addDiscount,
+};

@@ -5,7 +5,7 @@ exports.addCourse = async (req, res) => {
   try {
     const course = new Course(req.body);
     await course.save();
-    res.send(course);
+    res.status(201).send(course);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -19,7 +19,7 @@ exports.updateCourse = async (req, res) => {
       new: true,
     });
     if (!updateCourse) return res.status(404).send("Course not found");
-    res.send(updateCourse);
+    res.status(200).send(updateCourse);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -27,7 +27,8 @@ exports.updateCourse = async (req, res) => {
 exports.allCourses = async (req, res) => {
   try {
     const courses = await Course.find();
-    res.send(courses);
+    if (!courses) return res.status(404).send("Courses not found");
+    res.status(200).send(courses);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
