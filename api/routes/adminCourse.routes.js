@@ -5,6 +5,7 @@ const {
   addCourse,
   updateCourse,
   allCourses,
+  updateCourseImg,
 } = require("../controllers/adminCourse.controller");
 const {
   validateCourse,
@@ -23,5 +24,8 @@ router.put(
   updateCourse
 );
 router.get("/all-courses", allCourses);
+
+// ruta para actualizar imagen
+router.put("/courseImg/:courseId", updateCourseImg);
 
 module.exports = router;
