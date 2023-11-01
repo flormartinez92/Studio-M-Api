@@ -1,6 +1,4 @@
-const Favorite = require("../models/favorite.models");
-const User = require("../models/user.models");
-const Course = require("../models/course.models");
+const { User, Course, Favorite} = require("../models")
 
 //agregar favoritos
 const addFav = async (req, res) =>{
@@ -10,7 +8,8 @@ const addFav = async (req, res) =>{
     const userFound = await User.findById(userId).exec();
     const courseFound = await Course.findById(courseId).exec();
 
-    if(!userFound || !courseFound ) res.status(400).json( {message: "User or Course not fonund"} );
+    !userFound && res.status(400).json( {message: "User not fonund"} );
+    !courseFound && res.status(400).json( {message: "Course not fonund"} );
     
     let favorites = await Favorite.findOne({userId: userId});
 
@@ -28,6 +27,7 @@ const addFav = async (req, res) =>{
     return res.status(200).json(favorites);
   } catch (error) {
     console.error(error)
+    res.sendStatus(500);
   }
 }
 
@@ -38,7 +38,9 @@ const removeFav = async (req, res) =>{
   try {
     const userFound = await User.findById(userId).exec();
     const courseFound = await Course.findById(courseId).exec();
-    if(!userFound || !courseFound) return res.status(400).json({message: "User or Course not found"});
+    
+    !userFound && res.status(400).json( {message: "User not fonund"} );
+    !courseFound && res.status(400).json( {message: "Course not fonund"} );
 
     let favorites = await Favorite.findOne({userId: userId}).exec();
     if(!favorites) return res.status(400).json({message: "Error trying to remove course from favorites"});
@@ -49,8 +51,8 @@ const removeFav = async (req, res) =>{
     await favorites.save();
     return res.status(200).json(favorites);
   } catch (error) {
-    console.error(error)
-    res.status(500).json({error: error})
+    console.error(error);
+    res.sendStatus(500);
   }
 }
 
@@ -68,6 +70,7 @@ const showFav = async (req, res) =>{
     return res.status(200).json(favorites);
   } catch (error) {
     console.error(error)
+    res.sendStatus(500);
   }
 }
 

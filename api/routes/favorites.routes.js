@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const {addFav, showFav, removeFav} = require("../controllers/favorites.controller");
+const {validateMongoID} = require("../middleware/mongoIdValidation.middleware");
 
-router.post("/add/:courseId/:userId", addFav);
+router.post("/add/:courseId/:userId", validateMongoID, addFav);
 
-router.get("/:userId", showFav);
+router.get("/:userId", validateMongoID, showFav);
 
-router.delete("/remove/:courseId/:userId", removeFav);
+router.delete("/remove/:courseId/:userId", validateMongoID, removeFav);
 
 module.exports = router;

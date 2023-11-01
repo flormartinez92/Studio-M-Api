@@ -166,6 +166,7 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+//ruta para traer los cursos del usuario
 exports.userCourses = async (req, res) => {
   const { userId } = req.params;
 
@@ -182,24 +183,6 @@ exports.userCourses = async (req, res) => {
     res.sendStatus(500);
   }
 };
-
-// exports.userCart = async (req, res) => {
-//   const { userId } = req.params;
-
-//   try {
-//     const cart = await Cart.findOne({ user: userId });
-
-//     if (!cart) return res.status(400).send([]);
-
-//     const coursesCartID = cart.courseId;
-//     const coursesInfo = await Course.find({ _id: { $in: coursesCartID } });
-//     if (!coursesInfo) return res.status(400).send("Course info not found");
-
-//     res.status(200).send(coursesInfo);
-//   } catch (error) {
-//     res.sendStatus(500);
-//   }
-// };
 
 //ruta para devolver los datos del usuario
 exports.userData = async (req, res) => {
