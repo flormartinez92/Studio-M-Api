@@ -180,6 +180,7 @@ exports.userData = async (req, res) => {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId);
+
     !user && res.status(404).send("user not found")
 
     res.status(200).send(user);

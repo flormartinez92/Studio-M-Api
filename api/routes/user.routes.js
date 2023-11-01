@@ -96,6 +96,7 @@ router.put(
 
 //router.get("/:userId/purchasedCourse", userCourses);
 
+<<<<<<< HEAD
 module.exports = router;
 =======
 
@@ -109,3 +110,6 @@ router.get("/:userId", validateMongoID, validateFields, userData);
 
 module.exports = router;
 >>>>>>> b506f9859ba42ba7a303018489734d9e7767d979
+=======
+module.exports = router;
+>>>>>>> 8d9b350ea2f4f390a3d2958abfa07b3f7bcf056e
