@@ -1,6 +1,5 @@
 const { Course } = require("../models/");
 
-//rutas de ivan
 exports.addCourse = async (req, res) => {
   try {
     const course = new Course(req.body);

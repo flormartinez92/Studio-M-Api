@@ -1,13 +1,33 @@
-const { Project, User } = require("../models");
+const { Project, User, Certificate } = require("../models");
 const sendEmail = require("../utils/sendEmail");
 
 // Obtener todos los proyectos
 exports.allProjects = async (req, res) => {
   try {
-    const projects = await Project.find();
+    const projects = await Project.find({ status: false })
+      .populate("userId")
+      .populate("courseId");
+
     if (!projects) res.status(404).send("Projects not found");
 
-    res.status(200).send(projects);
+    const projectsData = projects.map((item) => {
+      const { userId, courseId, status, project_url, comment } = item;
+
+      return {
+        status,
+        project_url,
+        comment,
+        name: userId.name,
+        lastname: userId.lastname,
+        mail: userId.mail,
+        courseTitle: courseId.courseTitle,
+        projectsTitle: courseId.projectsTitle,
+        courseId: courseId._id,
+        userId: userId._id,
+      };
+    });
+
+    res.status(200).send(projectsData);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -49,12 +69,12 @@ exports.updateProject = async (req, res) => {
 // Cambiar el estado del proyecto (aprobado o desaprobado)
 exports.updateStatusProject = async (req, res) => {
   const { projectId } = req.params;
-  const playload = req.body;
+  const { status, userId, courseId } = req.body;
 
   try {
     const projectToUpdate = await Project.findByIdAndUpdate(
       projectId,
-      playload,
+      { status },
       {
         new: true,
       }
@@ -63,6 +83,14 @@ exports.updateStatusProject = async (req, res) => {
       return res.status(404).send("project not found");
     }
 
+    const certificate = await Certificate.create({
+      userId,
+      courseId,
+      description:
+        "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
+    });
+
+    await certificate.save();
     await projectToUpdate.save();
     res.status(200).send("Project updated successfully");
   } catch (error) {

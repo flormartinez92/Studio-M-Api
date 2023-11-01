@@ -98,11 +98,24 @@ const confirmBuyCart = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("courseId");
     if (!cart) res.status(404).send("Cart not found");
 
-    const coursesToBuy = cart.courseId;
-    user.course.push(...coursesToBuy);
+    const courseData = cart.courseId.map((prop) => {
+      let classesArr = [];
+      const { modules } = prop;
+      modules.forEach((module) => {
+        const { topics } = module;
+        topics.forEach((topic) => {
+          const { classes } = topic;
+          classes.forEach((oneClass) => {
+            classesArr.push({ classId: oneClass._id });
+          });
+        });
+      });
+      return { courseId: prop._id, classes: classesArr };
+    });
+    user.course.push(...courseData);
     await user.save();
 
     cart.deleteOne();
