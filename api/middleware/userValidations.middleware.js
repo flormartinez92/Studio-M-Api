@@ -17,6 +17,9 @@ const validateRegister = [
   check("mail", "The email is not valid").isEmail(),
 ];
 const validateMongoID = [check("userId", "id is not type mongo").isMongoId()];
+
+const validateEmail = [check("mail", "Email is required").not().isEmpty()];
+
 const validateLogin = [
   check("mail", "Email is required").not().isEmpty(),
   check("mail", "The email is not valid").isEmail(),
@@ -29,7 +32,7 @@ const validateForgotPassword = [
 ];
 
 const validateResetPassword = [
-  body("userId").isMongoId().withMessage("Invalid userId format"),
+  body("userId", "userId is not MongoId format").isMongoId(),
   body("token").notEmpty().withMessage("Token is required"),
   check("password", "Password is required").not().isEmpty(),
   check(
@@ -42,10 +45,18 @@ const validateResetPassword = [
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
 ];
 
+const validateUpdateCourseAdvance = [
+  check("mail", "Email is required").not().isEmpty(),
+  check("courseId", "courseId is not MongoId format").isMongoId(),
+  check("classId", "classId is not MongoId format").isMongoId(),
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
   validateForgotPassword,
   validateResetPassword,
   validateMongoID,
+  validateUpdateCourseAdvance,
+  validateEmail,
 };

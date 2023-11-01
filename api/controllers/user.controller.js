@@ -1,15 +1,8 @@
-//const User = require("../models/user.models");
-
-const Course = require("../models/course.models");
-const { User, Token, Cart } = require("../models");
-
+const { User, Token, Course, Certificate } = require("../models");
 const { generateToken } = require("../config/token");
-
-/* const Token = require("../models/token.models"); */
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
-/* const Cart = require("../models/cart.models"); */
 
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
@@ -23,7 +16,7 @@ exports.loginUser = async (req, res) => {
 
     const token = generateToken({ name, lastname, mail });
     res.cookie("token", token);
-    res.send(user);
+    res.status(200).send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -37,7 +30,7 @@ exports.addUser = async (req, res) => {
 
     const user = new User(req.body);
     await user.save();
-    res.send(user);
+    res.status(201).send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -75,19 +68,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Esta ruta deberia ser del administrador
-exports.deleteUser = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const user = await User.findByIdAndDelete(userId);
-    if (!user) return res.status(404).send("User not found");
-    return res.status(200).send("User deleted successfully");
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
 // Ruta para poner el mail y que te envien un correo con un link de recuperacion de contraseña.
 exports.forgotPassword = async (req, res) => {
   const { mail } = req.body;
@@ -96,14 +76,10 @@ exports.forgotPassword = async (req, res) => {
     const userMail = await User.findOne({ mail });
     if (!userMail) return res.status(404).send("user not found");
 
-    //  If the user exists, we check if there is an existing token that has been created for this user. If one exists, we delete the token.
     let token = await Token.findOne({ userId: userMail._id });
     if (token) await token.deleteOne();
 
-    // In this section of the code, a new random token is generated using the Node.js crypto API. This token will be sent to the user and can be used to reset their password.
     let resetToken = crypto.randomBytes(32).toString("hex");
-
-    // Now, create a hash of this token, which we’ll save in the database because saving plain resetToken in our database can open up vulnerabilities
     const hash = await bcrypt.hash(resetToken, 10);
 
     await new Token({
@@ -166,19 +142,34 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-//ruta para traer los cursos del usuario
+// controlador que devuelve la info de los cursos de un usuario y su avance
 exports.userCourses = async (req, res) => {
-  const { userId } = req.params;
+  const { mail } = req.body;
 
   try {
-    const user = await User.findById(userId);
+    const user = await User.findOne({ mail });
     if (!user) return res.status(404).send("user not found");
 
-    const coursesId = user.course;
-    const coursesInfo = await Course.find({ _id: { $in: coursesId } });
-    if (!coursesId) return res.status(200).send([]);
+    const userCourses = user.course.map(async (userCourse) => {
+      const seenClasses = userCourse.classes.filter(
+        (viewClass) => viewClass.status == true
+      ).length;
 
-    res.status(200).send(coursesInfo);
+      const courseInfo = await Course.findById({ _id: userCourse.courseId });
+      if (!courseInfo) return res.status(404).send("Course not found");
+
+      const progress = Math.round(
+        (seenClasses / userCourse.classes.length) * 100
+      );
+
+      return {
+        courseInfo,
+        progress,
+      };
+    });
+
+    const courses = await Promise.all(userCourses);
+    res.status(200).send(courses);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -194,5 +185,59 @@ exports.userData = async (req, res) => {
     res.status(200).send(user);
   } catch (error) {
       console.error(error)
+  }
+};
+
+
+// controlador para cambiar el estado de la clase
+exports.updateCourseAdvance = async (req, res) => {
+  const { mail, courseId, classId, status } = req.body;
+
+  try {
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("User not found");
+
+    const course = user.course.find((course) => course.courseId == courseId);
+    const classes = course.classes;
+    const oneClass = classes.find((one) => one.classId == classId);
+
+    oneClass.status = status;
+
+    await user.save();
+
+    res.send(user);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+// controlador que me traiga los certificados de un usuario
+exports.allCertificates = async (req, res) => {
+  const { mail } = req.body;
+
+  try {
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("user not found");
+
+    const certificate = await Certificate.find({ userId: user._id })
+      .populate("courseId")
+      .populate("userId");
+
+    const certificateData = certificate.map((item) => {
+      const { userId, courseId, description, createdAt } = item;
+
+      return {
+        name: userId.name,
+        lastname: userId.lastname,
+        dni: userId.dni,
+        courseTitle: courseId.courseTitle,
+        description,
+        createdAt,
+      };
+    });
+
+    res.send(certificateData);
+  } catch (error) {
+    res.sendStatus(500);
   }
 };

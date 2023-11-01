@@ -1,141 +1,12 @@
 const { Course } = require("../models");
-const User = require("../models/user.models");
-const Project = require("../models/project.models");
-const Coupon = require("../models/coupon.models");
 
 exports.allCourses = async (req, res) => {
   try {
     const courses = await Course.find({ status: true });
-    res.send(courses);
+    if (!courses) return res.status(404).send("Courses not found");
+    res.status(200).send(courses);
   } catch (error) {
     console.error(error);
-    res.sendStatus(500);
-  }
-};
-
-//rutas de marcos
-//Ver todos los proyectos
-exports.allProjects = async (req, res) => {
-  try {
-    const projects = await Project.find();
-    res.status(200).json(projects);
-  } catch (error) {
-    console.error(error);
-    res.status(401).json({ error: "error getting projects" });
-  }
-};
-
-//actualizar proyecto, aprobar o desaprobar
-exports.updateProject = async (req, res) => {
-  const { isApproved } = req.body;
-  const id = req.params.id;
-  try {
-    // aca verificamos si el proyecto existe
-    const existingProject = await Project.findById(id);
-
-    if (!existingProject) {
-      return res.status(404).json({ message: "project not found" });
-    }
-
-    // aca actualizamos el proyecto
-    existingProject.isApproved = isApproved;
-
-    //aca guardamos el proyecto actualizado
-    await existingProject.save();
-
-    res.status(200).json({ message: "corrected project" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
-  }
-};
-
-//crear un cupon
-exports.createCoupon = async (req, res) => {
-  try {
-    const newCoupon = await Coupon.create(req.body);
-    if (!newCoupon) {
-      return res.status(404).json({ message: "error when creating a coupon" });
-    }
-
-    res
-      .status(201)
-      .json({ message: "coupon created successfully", coupon: newCoupon });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
-  }
-};
-
-//eliminar un cupon
-exports.deleteCoupon = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const couponRemoved = await Coupon.findByIdAndDelete(id);
-    if (!couponRemoved) {
-      return res.status(404).json({ message: "error when deleting a coupon" });
-    }
-
-    res.status(200).json({ message: "coupon successfully deleted" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
-  }
-};
-
-//actualizar un cupon
-exports.updateCoupon = async (req, res) => {
-  const { id } = req.params;
-  const payload = req.body;
-  try {
-    const couponToUpdate = await Coupon.findByIdAndUpdate(id, payload, {
-      new: true,
-    });
-    if (!couponToUpdate) {
-      return res.status(401).json({ message: "coupon not found" });
-    }
-
-    await couponToUpdate.save();
-
-    res.status(200).json({ message: "coupon updated successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json(error);
-  }
-};
-
-//rutas de ivan
-exports.addCourse = async (req, res) => {
-  try {
-    const course = new Course(req.body);
-    await course.save();
-    res.send(course);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
-exports.updateCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const payload = req.body;
-    const updateCourse = await Course.findByIdAndUpdate(id, payload, {
-      new: true,
-    });
-    if (!updateCourse) return res.status(404).send("Course not found");
-    res.send(updateCourse);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
-
-exports.deleteCourse = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleteCourse = await Course.findByIdAndDelete(id);
-    if (!deleteCourse) return res.status(404).send("Course not found");
-    res.sendStatus(200);
-  } catch (error) {
     res.sendStatus(500);
   }
 };
@@ -143,11 +14,11 @@ exports.deleteCourse = async (req, res) => {
 exports.oneCourse = async (req, res) => {
   try {
     const { id } = req.params;
+
     const course = await Course.findById(id);
-    if (!course) {
-      return res.sendStatus(404);
-    }
-    res.send(course);
+    if (!course) return res.status(404).send("Course not found");
+
+    res.status(200).send(course);
   } catch (error) {
     console.error(error);
   }
