@@ -6,12 +6,19 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { dbConnection } = require("./config/db");
 const router = require("./routes");
+const fileUpload = require("express-fileupload");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("tiny"));
-
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+    createParentPath: true,
+  })
+);
 app.use(
   cors({
     origin: `${process.env.STUDIO_M_CLIENT_HOST}`,
@@ -19,7 +26,6 @@ app.use(
     credentials: true,
   })
 );
-
 app.use("/api", router);
 
 dbConnection();
