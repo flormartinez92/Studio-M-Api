@@ -168,10 +168,10 @@ exports.updateImgUser = async (req, res) => {
 
 // controlador que devuelve la info de los cursos de un usuario y su avance
 exports.userCourses = async (req, res) => {
-  const { mail } = req.body;
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ mail });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
     const userCourses = user.course.map(async (userCourse) => {
@@ -237,10 +237,10 @@ exports.updateCourseAdvance = async (req, res) => {
 
 // controlador que me traiga los certificados de un usuario
 exports.allCertificates = async (req, res) => {
-  const { mail } = req.body;
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ mail });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
     const certificate = await Certificate.find({ userId: user._id })
