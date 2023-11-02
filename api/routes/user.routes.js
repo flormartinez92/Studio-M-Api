@@ -96,10 +96,20 @@ router.put(
   updateUser
 );
 
-router.get("/userCourses", validateEmail, validateFields, userCourses);
+router.get(
+  "/userCourses/:userId",
+  validateMongoID,
+  validateFields,
+  userCourses
+);
 
 // Ruta que me traiga los certificados del usuario
-router.get("/certificate", validateEmail, validateFields, allCertificates);
+router.get(
+  "/certificate/:userId",
+  validateMongoID,
+  validateFields,
+  allCertificates
+);
 
 //RUTA QUE TRAE LA INFO DEL USUARIO
 router.get("/:userId", validateMongoID, validateFields, userData);
