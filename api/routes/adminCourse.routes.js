@@ -6,6 +6,7 @@ const {
   updateCourse,
   allCourses,
   updateImgCourse,
+
 } = require("../controllers/adminCourse.controller");
 const {
   validateCourse,
@@ -35,5 +36,7 @@ router.put(
   updateCourse
 );
 router.get("/all-courses", allCourses);
+
+
 
 module.exports = router;

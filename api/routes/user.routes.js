@@ -96,7 +96,7 @@ router.put(
   updateUser
 );
 
-router.get("/courseAdvance", validateEmail, validateFields, userCourses);
+router.get("/userCourses", validateEmail, validateFields, userCourses);
 
 // Ruta que me traiga los certificados del usuario
 router.get("/certificate", validateEmail, validateFields, allCertificates);

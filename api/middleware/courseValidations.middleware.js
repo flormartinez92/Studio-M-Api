@@ -6,7 +6,7 @@ const validateCourse = [
   check("courseDescription", "Course description is required").not().isEmpty(),
   check("courseLevel", "Course Level is required").not().isEmpty(),
   check("courseDuration", "Course Duration is required").not().isEmpty(),
-  check("courseImg_url", "Image url is required").not().isEmpty(),
+  // check("courseImg_url", "Image url is required").not().isEmpty(),
   check("coursePrice", "Course Price is required").not().isEmpty(),
   check("modules", "Modules is required").not().isEmpty(),
   check("projectsTitle", "Projects Title is required").not().isEmpty(),

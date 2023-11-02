@@ -27,7 +27,6 @@ app.use(
     credentials: true,
   })
 );
-
 app.use("/api", router);
 
 dbConnection();
