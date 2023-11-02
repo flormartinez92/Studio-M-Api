@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
+
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
 
@@ -153,6 +154,7 @@ exports.updateImgUser = async (req, res) => {
       const [public_id] = nameFile.split(".");
       await cloudinary.uploader.destroy(public_id);
     }
+
     const { tempFilePath } = req.files.archivo;
     const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
     user.profileImg = secure_url;
