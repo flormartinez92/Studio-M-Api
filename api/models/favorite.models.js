@@ -8,13 +8,11 @@ const FavoriteSchema = new Schema({
       ref: "Course",
     },
   ],
-  userId: [
-    {
-      type: Schema.Types.ObjectId,
-      required: [true, "User is required"],
-      ref: "User",
-    },
-  ],
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: [true, "User is required"],
+    ref: "User",
+  },
 });
 
 const Favorite = model("Favorite", FavoriteSchema);
