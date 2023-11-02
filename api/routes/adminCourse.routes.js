@@ -5,16 +5,29 @@ const {
   addCourse,
   updateCourse,
   allCourses,
+  updateImgCourse,
+
 } = require("../controllers/adminCourse.controller");
 const {
   validateCourse,
   validateMongoIdCourse,
 } = require("../middleware/courseValidations.middleware");
+const {
+  validateUploadCourse,
+} = require("../middleware/adminImageValidations.middleware");
 
 //rutas agregar curso
 router.post("/add", validateCourse, validateFields, addCourse);
 //rutas actualizar curso
 router.put("/:id", validateMongoIdCourse, validateFields, updateCourse);
+
+//ruta actualizar imagen
+router.put(
+  "/updateImg/:id",
+  validateUploadCourse,
+  validateFields,
+  updateImgCourse
+);
 //enable disable curso
 router.put(
   "/enable-disable/:id",
@@ -23,5 +36,7 @@ router.put(
   updateCourse
 );
 router.get("/all-courses", allCourses);
+
+
 
 module.exports = router;

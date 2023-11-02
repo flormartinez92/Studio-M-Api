@@ -55,7 +55,7 @@ const UserSchema = new Schema({
   },
   profileImg: {
     type: String,
-    required: [false],
+    default: "",
   },
   course: {
     type: [Course],
