@@ -3,7 +3,8 @@ const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
-
+const cloudinary = require("cloudinary").v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
 
@@ -139,6 +140,27 @@ exports.resetPassword = async (req, res) => {
     res.status(200).send("Password reset was successful");
   } catch (error) {
     res.sendStatus(500);
+  }
+};
+//Controlador para actualizar la imagen
+exports.updateImgUser = async (req, res) => {
+  try {
+    const { mail } = req.body;
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("User not found");
+    if (user.profileImg) {
+      const nameFile = user.profileImg.split("/").pop();
+      const [public_id] = nameFile.split(".");
+      await cloudinary.uploader.destroy(public_id);
+    }
+    const { tempFilePath } = req.files.archivo;
+    const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
+    user.profileImg = secure_url;
+
+    await user.save();
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(500).send(err);
   }
 };
 

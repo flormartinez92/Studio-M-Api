@@ -19,6 +19,7 @@ app.use(
     createParentPath: true,
   })
 );
+
 app.use(
   cors({
     origin: `${process.env.STUDIO_M_CLIENT_HOST}`,

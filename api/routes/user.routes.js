@@ -15,6 +15,7 @@ const {
   updateCourseAdvance,
   courseAdvance,
   allCertificates,
+  updateImgUser,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -26,6 +27,9 @@ const {
   validateEmail,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
+const {
+  validateUploadUser,
+} = require("../middleware/adminImageValidations.middleware");
 
 // RUTAS DEL USUARIO
 
@@ -52,6 +56,8 @@ router.post(
   resetPassword
 );
 
+//ruta actualizar imagen
+router.put("/updateImg", validateUploadUser, validateFields, updateImgUser);
 // Ruta para actualizar el estado de la clase
 router.put(
   "/courseAdvance",
