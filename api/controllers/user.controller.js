@@ -3,6 +3,8 @@ const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
+const cloudinary = require("cloudinary").v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
@@ -141,13 +143,35 @@ exports.resetPassword = async (req, res) => {
     res.sendStatus(500);
   }
 };
+//Controlador para actualizar la imagen
+exports.updateImgUser = async (req, res) => {
+  try {
+    const { mail } = req.body;
+    const user = await User.findOne({ mail });
+    if (!user) return res.status(404).send("User not found");
+    if (user.profileImg) {
+      const nameFile = user.profileImg.split("/").pop();
+      const [public_id] = nameFile.split(".");
+      await cloudinary.uploader.destroy(public_id);
+    }
+
+    const { tempFilePath } = req.files.archivo;
+    const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
+    user.profileImg = secure_url;
+
+    await user.save();
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
 
 // controlador que devuelve la info de los cursos de un usuario y su avance
 exports.userCourses = async (req, res) => {
-  const { mail } = req.body;
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ mail });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
     const userCourses = user.course.map(async (userCourse) => {
@@ -181,10 +205,11 @@ exports.userData = async (req, res) => {
 
   try {
     const user = await User.findById(userId);
-    if (!user) return res.status(404).send("user not found");
+    !user && res.status(404).send("user not found");
 
     res.status(200).send(user);
   } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 };
@@ -213,10 +238,10 @@ exports.updateCourseAdvance = async (req, res) => {
 
 // controlador que me traiga los certificados de un usuario
 exports.allCertificates = async (req, res) => {
-  const { mail } = req.body;
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ mail });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
     const certificate = await Certificate.find({ userId: user._id })

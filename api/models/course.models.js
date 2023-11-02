@@ -13,7 +13,7 @@ const Class = new Schema({
 const topic = new Schema({
   topicName: {
     type: String,
-    required: [true, "topic name is required"],
+    default: "",
   },
   classes: {
     type: [Class],
@@ -59,7 +59,9 @@ const CourseSchema = new Schema({
   },
   courseImg_url: {
     type: String,
-    required: [true, "url is required"],
+    required: [false],
+    default:
+      "https://images-ext-2.discordapp.net/external/aakjVbAOtaeGXmD4ExiIUwIWGOx314nVds22EYVIFXI/%3Fwidth%3D800%26name%3DQue%2520es%2520el%2520error%2520404%25201-1.png/https/www.cyberclick.es/hs-fs/hubfs/04.%2520BLOG/Que%2520es%2520el%2520error%2520404%25201-1.png?width=1600&height=1010",
   },
   status: {
     type: Boolean,
@@ -75,11 +77,11 @@ const CourseSchema = new Schema({
   },
   projectsDescription: {
     type: String,
-    required: [true, "Projects description is required"],
+    default: "",
   },
   projectAim: {
     type: String,
-    required: [true, "Project Aim is required"],
+    default: "",
   },
 });
 
