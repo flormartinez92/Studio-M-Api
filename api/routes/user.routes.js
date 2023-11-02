@@ -47,11 +47,13 @@ router.post("/forgot", validateForgotPassword, validateFields, forgotPassword);
 // ResetPassword
 router.post("/resetPassword", validateResetPassword, validateFields, resetPassword);
 
+//Ruta para traer los cursos comprados por un usuario
+router.post("/userCourses", validateEmail, validateFields, userCourses);
+
 //Ruta que trae la informacion del usuario
 router.get("/:userId", validateMongoID, validateFields, userData);
 
-//Ruta para traer los cursos comprados por un usuario
-router.get("/:userId/courses", validateMongoID, userCourses);
+// router.get("/:userId/courses", validateMongoID, userCourses);
 
 // Ruta para actualizar el estado de la clase
 router.put(
@@ -90,26 +92,13 @@ router.put(
   ],
   updateUser
 );
-<<<<<<< HEAD
 
 // Esta ruta deberia ser del administrador
 
 //router.get("/:userId/purchasedCourse", userCourses);
 
-<<<<<<< HEAD
-module.exports = router;
-=======
-
-router.get("/userCourses", validateEmail, validateFields, userCourses);
-
 // Ruta que me traiga los certificados del usuario
 router.get("/certificate", validateEmail, validateFields, allCertificates);
 
-//RUTA QUE TRAE LA INFO DEL USUARIO
-router.get("/:userId", validateMongoID, validateFields, userData);
 
 module.exports = router;
->>>>>>> b506f9859ba42ba7a303018489734d9e7767d979
-=======
-module.exports = router;
->>>>>>> 8d9b350ea2f4f390a3d2958abfa07b3f7bcf056e
