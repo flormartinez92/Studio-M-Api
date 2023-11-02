@@ -13,7 +13,6 @@ const {
   userCourses,
   userData,
   updateCourseAdvance,
-  courseAdvance,
   allCertificates,
   updateImgUser,
 } = require("../controllers/user.controller");
@@ -58,6 +57,7 @@ router.post(
 
 //ruta actualizar imagen
 router.put("/updateImg", validateUploadUser, validateFields, updateImgUser);
+
 // Ruta para actualizar el estado de la clase
 router.put(
   "/courseAdvance",

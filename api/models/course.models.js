@@ -13,7 +13,7 @@ const Class = new Schema({
 const topic = new Schema({
   topicName: {
     type: String,
-    required: [true, "topic name is required"],
+    default: "",
   },
   classes: {
     type: [Class],
@@ -77,11 +77,11 @@ const CourseSchema = new Schema({
   },
   projectsDescription: {
     type: String,
-    required: [true, "Projects description is required"],
+    default: "",
   },
   projectAim: {
     type: String,
-    required: [true, "Project Aim is required"],
+    default: "",
   },
 });
 
