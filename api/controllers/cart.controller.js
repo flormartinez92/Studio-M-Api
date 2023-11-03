@@ -135,13 +135,13 @@ const addDiscount = async (req, res) => {
     if (!user) return res.status(404).send("user not found");
 
     const cart = await Cart.findOne({ userId: user._id });
-    if (!cart) res.status(404).send("Cart not found");
+    if (!cart) return res.status(404).send("Cart not found");
 
     const validateCoupon = await Coupon.findOne({
       couponCode: couponCode.toUpperCase(),
       status: true,
     });
-    if (!validateCoupon) res.status(404).send("Coupon not found");
+    if (!validateCoupon) return res.status(404).send("Coupon not found");
 
     const totalDiscount =
       cart.totalAmount -
