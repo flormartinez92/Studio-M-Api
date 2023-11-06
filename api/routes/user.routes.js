@@ -76,7 +76,12 @@ router.put(
 );
 
 // Update user data (password)
-router.put("/updateUserPassword/:userId", updateUserPassword);
+router.put(
+  "/updateUserPassword/:userId",
+  validateUpdateUserPassword,
+  validateFields,
+  updateUserPassword
+);
 
 router.get(
   "/userCourses/:userId",
