@@ -48,23 +48,31 @@ exports.logout = (req, res) => {
 };
 
 // Este controlador hay que verlo cuando definamos lo de cloudinary
-exports.updateUser = async (req, res) => {
+exports.updateUserData = async (req, res) => {
   const { userId } = req.params;
-  const { name, lastname, dni, password, profileImg } = req.body;
+  const payload = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(userId, payload, { new: true });
+    if (!user) return res.status(404).send("User not found");
+    return res.status(200).send("User updated successfully");
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.updateUserPassword = async (req, res) => {
+  const { userId } = req.params;
+  const { firstpassword, secondpassword } = req.body;
 
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send("User not found");
-
-    user.name = name || user.name;
-    user.lastname = lastname || user.lastname;
-    user.dni = dni || user.dni;
-    user.password = password || user.password;
-    user.profileImg = profileImg || user.profileImg;
-
+    if (firstpassword != secondpassword)
+      return res.status(404).send("Invalid Password");
+    user.password = secondpassword;
     await user.save();
-
-    return res.status(200).send("User updated successfully");
+    res.send(user);
   } catch (error) {
     res.sendStatus(500);
   }
