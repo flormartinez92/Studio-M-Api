@@ -10,7 +10,7 @@ const validateFileExtension = (req, res, next) => {
   const { archivo } = req.files;
   const extension = archivo.name.split(".").pop();
 
-  if (!validateExtensions.includes(extension)) {
+  if (!validateExtensions.includes(extension.toLowerCase())) {
     return res.status(400).send("Invalid extension");
   }
   next();
