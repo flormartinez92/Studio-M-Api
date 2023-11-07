@@ -2,11 +2,11 @@ const { Schema, model } = require("mongoose");
 const Class = new Schema({
   classInfo: {
     type: String,
-    required: [true, "class is required"],
+    default: "",
   },
   video_url: {
     type: String,
-    required: [true, "url is required"],
+    default: "",
   },
 });
 
@@ -33,10 +33,15 @@ const moduleSchema = new Schema({
 });
 
 const CourseSchema = new Schema({
-  courseTitle: {
+  courseLongTitle: {
     type: String,
-    required: [true, "Course title is required"],
+    required: [true, "Course long title is required"],
   },
+  courseShortTitle: {
+    type: String,
+    required: [true, "Course short title is required"],
+  },
+
   courseSubtitle: {
     type: String,
     required: [true, "Course subtitle is required"],

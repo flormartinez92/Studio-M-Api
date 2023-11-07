@@ -7,7 +7,7 @@ const {
   loginUser,
   userPersistence,
   logout,
-  updateUser,
+  updateUserData,
   forgotPassword,
   resetPassword,
   userCourses,
@@ -15,6 +15,7 @@ const {
   updateCourseAdvance,
   allCertificates,
   updateImgUser,
+  updateUserPassword,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -23,7 +24,7 @@ const {
   validateResetPassword,
   validateMongoID,
   validateUpdateCourseAdvance,
-  validateEmail,
+  validateUpdateUserPassword,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 const {
@@ -66,34 +67,20 @@ router.put(
   updateCourseAdvance
 );
 
-// Update (Esto hay que verlo porque vamos a usar Cloudinary)
+// Update user data (name, lastname, dni)
 router.put(
-  "/update/:userId",
-  [
-    check("name").optional().not().isEmpty(),
-    check("lastname").optional().not().isEmpty(),
-    check("dni").optional().not().isEmpty(),
-    check("password", "The password must be at least 4 characters")
-      .optional()
-      .isLength({ min: 4 }),
-    body("profileImg")
-      .optional()
-      .custom((value) => {
-        if (!value) return true;
-        if (
-          value.startsWith("http://") ||
-          value.startsWith("https://") ||
-          value.endsWith(".png") ||
-          value.endsWith(".svg")
-        ) {
-          return true;
-        }
-        throw new Error("Profile image must be a URL or a PNG/SVG file");
-      })
-      .withMessage("Profile image must be a URL or a PNG/SVG file"),
-    validateFields,
-  ],
-  updateUser
+  "/updateUserData/:userId",
+  validateMongoID,
+  validateFields,
+  updateUserData
+);
+
+// Update user data (password)
+router.put(
+  "/updateUserPassword/:userId",
+  validateUpdateUserPassword,
+  validateFields,
+  updateUserPassword
 );
 
 router.get(
