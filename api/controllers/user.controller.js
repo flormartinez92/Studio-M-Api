@@ -14,9 +14,9 @@ exports.loginUser = async (req, res) => {
     if (!user) return res.status(404).send("user not found");
     const password_check = await user.validatorPassword(password);
     if (!password_check) return res.status(401).send("Invalid password");
-    const { name, lastname } = user;
+    const { name, lastname, dni } = user;
 
-    const token = generateToken({ name, lastname, mail });
+    const token = generateToken({ name, lastname, mail, dni });
     res.cookie("token", token);
     res.status(200).send(user);
   } catch (error) {
