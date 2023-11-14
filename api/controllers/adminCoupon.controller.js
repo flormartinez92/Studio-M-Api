@@ -71,3 +71,17 @@ exports.allCoupons = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+// ruta para un solo cupon
+exports.oneCoupon = async (req, res) => {
+  try {
+    const { couponId } = req.params;
+
+    const coupon = await Coupon.findById(couponId);
+    if (!coupon) return res.status(404).send("Coupon not found");
+
+    res.status(200).send(coupon);
+  } catch (error) {
+    console.error(error);
+  }
+};
