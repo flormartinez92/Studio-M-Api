@@ -23,7 +23,7 @@ app.use(
 app.use(
   cors({
     origin: `${process.env.STUDIO_M_CLIENT_HOST}`,
-    methods: ["GET", "POST", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "DELETE", "OPTIONS", "PUT"],
     credentials: true,
   })
 );
