@@ -111,3 +111,17 @@ exports.deleteProject = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+// ruta para un solo proyecto
+exports.oneProject = async (req, res) => {
+  try {
+    const { proyectId } = req.params;
+
+    const project = await Project.findById(proyectId);
+    if (!project) return res.status(404).send("Project not found");
+
+    res.status(200).send(project);
+  } catch (error) {
+    console.error(error);
+  }
+};
