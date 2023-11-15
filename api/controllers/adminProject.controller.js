@@ -20,7 +20,7 @@ exports.allProjects = async (req, res) => {
         name: userId.name,
         lastname: userId.lastname,
         mail: userId.mail,
-        courseTitle: courseId.courseLongTitle,
+        courseTitle: courseId.courseShortTitle,
         projectsTitle: courseId.projectsTitle,
         courseId: courseId._id,
         userId: userId._id,
