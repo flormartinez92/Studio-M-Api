@@ -7,13 +7,15 @@ exports.allProjects = async (req, res) => {
     const projects = await Project.find({ status: false })
       .populate("userId")
       .populate("courseId");
+    console.log(projects);
 
     if (!projects) res.status(404).send("Projects not found");
 
     const projectsData = projects.map((item) => {
-      const { userId, courseId, status, project_url, comment } = item;
+      const { userId, courseId, status, project_url, comment, _id } = item;
 
       return {
+        projectId: _id,
         status,
         project_url,
         comment,
@@ -109,5 +111,19 @@ exports.deleteProject = async (req, res) => {
     return res.status(200).send("Project deleted successfully");
   } catch (error) {
     res.sendStatus(500);
+  }
+};
+
+// ruta para un solo proyecto
+exports.oneProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).send("Project not found");
+
+    res.status(200).send(project);
+  } catch (error) {
+    console.error(error);
   }
 };
