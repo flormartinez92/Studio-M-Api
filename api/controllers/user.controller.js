@@ -18,7 +18,7 @@ exports.loginUser = async (req, res) => {
 
     const token = generateToken({ name, lastname, mail, dni, _id });
     res.cookie("token", token);
-    res.status(200).send(user);
+    res.status(200).send({ token, user });
   } catch (error) {
     res.sendStatus(500);
   }
@@ -220,7 +220,6 @@ exports.userData = async (req, res) => {
     res.sendStatus(500);
   }
 };
-
 
 // controlador para cambiar el estado de la clase
 exports.updateCourseAdvance = async (req, res) => {
