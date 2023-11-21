@@ -25,6 +25,7 @@ const {
   validateMongoID,
   validateUpdateCourseAdvance,
   validateUpdateUserPassword,
+  validateEmail,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 const {
@@ -39,22 +40,30 @@ router.post("/add", validateRegister, validateFields, addUser);
 // Login
 router.post("/login", validateLogin, validateFields, loginUser);
 
-// Persistence
+// Persistencia
 router.get("/me", validateUser, userPersistence);
 
 // Logout
 router.post("/logout", logout);
 
-// ForgotPassword
+// Forgot Password
 router.post("/forgot", validateForgotPassword, validateFields, forgotPassword);
 
-// ResetPassword
+// Reset Password
 router.post(
   "/resetPassword",
   validateResetPassword,
   validateFields,
   resetPassword
 );
+
+//Ruta para traer los cursos comprados por un usuario
+router.post("/userCourses", validateEmail, validateFields, userCourses);
+
+//Ruta que trae la informacion del usuario
+router.get("/:userId", validateMongoID, validateFields, userData);
+
+// router.get("/:userId/courses", validateMongoID, userCourses);
 
 //ruta actualizar imagen
 router.put("/updateImg", validateUploadUser, validateFields, updateImgUser);
@@ -97,8 +106,5 @@ router.get(
   validateFields,
   allCertificates
 );
-
-//RUTA QUE TRAE LA INFO DEL USUARIO
-router.get("/:userId", validateMongoID, validateFields, userData);
 
 module.exports = router;

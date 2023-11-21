@@ -14,9 +14,9 @@ exports.loginUser = async (req, res) => {
     if (!user) return res.status(404).send("user not found");
     const password_check = await user.validatorPassword(password);
     if (!password_check) return res.status(401).send("Invalid password");
-    const { name, lastname } = user;
+    const { name, lastname, dni, _id } = user;
 
-    const token = generateToken({ name, lastname, mail });
+    const token = generateToken({ name, lastname, mail, dni, _id });
     res.cookie("token", token);
     res.status(200).send(user);
   } catch (error) {
@@ -210,7 +210,6 @@ exports.userCourses = async (req, res) => {
 //ruta para devolver los datos del usuario
 exports.userData = async (req, res) => {
   const { userId } = req.params;
-
   try {
     const user = await User.findById(userId);
     !user && res.status(404).send("user not found");
@@ -221,6 +220,7 @@ exports.userData = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 
 // controlador para cambiar el estado de la clase
 exports.updateCourseAdvance = async (req, res) => {

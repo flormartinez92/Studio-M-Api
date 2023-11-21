@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   allProjects,
+  oneProject,
   updateProject,
   updateStatusProject,
   deleteProject,
@@ -35,5 +36,13 @@ router.put(
 
 // Ruta para eliminar proyectos
 router.delete("/:projectId", validateProjectId, validateFields, deleteProject);
+
+//rutas para obtener un proyecto
+router.get(
+  "/allProjects/:projectId",
+  validateProjectId,
+  validateFields,
+  oneProject
+);
 
 module.exports = router;
