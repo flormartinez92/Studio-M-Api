@@ -210,7 +210,6 @@ exports.userCourses = async (req, res) => {
 //ruta para devolver los datos del usuario
 exports.userData = async (req, res) => {
   const { userId } = req.params;
-
   try {
     const user = await User.findById(userId);
     !user && res.status(404).send("user not found");
@@ -221,6 +220,7 @@ exports.userData = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 
 // controlador para cambiar el estado de la clase
 exports.updateCourseAdvance = async (req, res) => {
