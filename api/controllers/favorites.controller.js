@@ -8,17 +8,17 @@ const addFav = async (req, res) => {
     const userFound = await User.findById(userId).exec();
     const courseFound = await Course.findById(courseId).exec();
 
-    !userFound && res.status(400).json( {message: "User not fonund"} );
-    !courseFound && res.status(400).json( {message: "Course not fonund"} );
-    
-    let favorites = await Favorite.findOne({userId: userId});
+    !userFound && res.status(400).json({ message: "User not fonund" });
+    !courseFound && res.status(400).json({ message: "Course not fonund" });
 
-    if(!favorites){
-      favorites = new Favorite({userId: userId, courseId: courseId});
-    }else{
-      if(favorites.courseId.includes(courseId)){
-        return res.status(400).json( {message: "Course already in favorites"} );
-      }else{
+    let favorites = await Favorite.findOne({ userId: userId });
+
+    if (!favorites) {
+      favorites = new Favorite({ userId: userId, courseId: courseId });
+    } else {
+      if (favorites.courseId.includes(courseId)) {
+        return res.status(400).json({ message: "Course already in favorites" });
+      } else {
         favorites.courseId.push(courseId);
       }
     }
@@ -26,39 +26,44 @@ const addFav = async (req, res) => {
     await favorites.save();
     return res.status(200).json(favorites);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.sendStatus(500);
   }
-}
+};
 
 //eliminar favoritos
-const removeFav = async (req, res) =>{
+const removeFav = async (req, res) => {
   const { userId, courseId } = req.params;
 
   try {
     const userFound = await User.findById(userId).exec();
     const courseFound = await Course.findById(courseId).exec();
-    
-    !userFound && res.status(400).json( {message: "User not fonund"} );
-    !courseFound && res.status(400).json( {message: "Course not fonund"} );
 
-    let favorites = await Favorite.findOne({userId: userId}).exec();
-    if(!favorites) return res.status(400).json({message: "Error trying to remove course from favorites"});
+    !userFound && res.status(400).json({ message: "User not fonund" });
+    !courseFound && res.status(400).json({ message: "Course not fonund" });
 
-    const updatedFavorite = favorites.courseId.filter((course_id) => !course_id.equals(courseFound._id));
+    let favorites = await Favorite.findOne({ userId: userId }).exec();
+    if (!favorites)
+      return res
+        .status(400)
+        .json({ message: "Error trying to remove course from favorites" });
+
+    const updatedFavorite = favorites.courseId.filter(
+      (course_id) => !course_id.equals(courseFound._id)
+    );
     favorites.courseId = updatedFavorite;
-    
+
     await favorites.save();
     return res.status(200).json(favorites);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
   }
-}
+};
 
 //traer/mostrar favoritos
-const showFav = async (req, res) =>{
-  const { userId } =  req.params;
+const showFav = async (req, res) => {
+  const { userId } = req.params;
 
   try {
     const userFound = await User.findById(userId).exec();
@@ -68,19 +73,20 @@ const showFav = async (req, res) =>{
     if (!favorites) return res.status(200).json([]);
 
     const courseArray = await Promise.all(
-      favorites.courseId?.map(async (course)=>{
+      favorites.courseId?.map(async (course) => {
         const courseFound = await Course.findById(course);
         if (!courseFound) return null;
-        
-        return courseFound;
-    }))
 
-    const courses = courseArray.filter((course)=> course !== null);
+        return courseFound;
+      })
+    );
+
+    const courses = courseArray.filter((course) => course !== null);
     res.status(200).json(courses);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.sendStatus(500);
   }
-}
+};
 
-module.exports = {addFav, removeFav, showFav}
+module.exports = { addFav, removeFav, showFav };

@@ -78,13 +78,9 @@ const cartCourses = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate("courseId");
     if (!cart) return res.status(404).send("Cart not found");
-
-    const courses = await Course.find({ _id: { $in: cart.courseId } });
-    if (!courses) return res.status(404).send("Courses not found");
-
-    res.status(200).send(courses);
+    res.status(200).send(cart);
   } catch (error) {
     res.sendStatus(500);
   }
