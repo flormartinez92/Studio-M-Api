@@ -62,12 +62,21 @@ const showFav = async (req, res) =>{
 
   try {
     const userFound = await User.findById(userId).exec();
-    
-    !userFound && res.status(400).json( {message: "User not fonund"} );
-    
-    let favorites = await Favorite.findOne({userId: userId});
-    
-    return res.status(200).json(favorites);
+    !userFound && res.status(400).json({ message: "User not fonund" });
+
+    let favorites = await Favorite.findOne({ userId: userId });
+    if (!favorites) return res.status(200).json([]);
+
+    const courseArray = await Promise.all(
+      favorites.courseId?.map(async (course)=>{
+        const courseFound = await Course.findById(course);
+        if (!courseFound) return null;
+        
+        return courseFound;
+    }))
+
+    const courses = courseArray.filter((course)=> course !== null);
+    res.status(200).json(courses);
   } catch (error) {
     console.error(error)
     res.sendStatus(500);
