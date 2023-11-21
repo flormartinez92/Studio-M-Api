@@ -7,15 +7,15 @@ const {
   loginUser,
   userPersistence,
   logout,
-  updateUser,
+  updateUserData,
   forgotPassword,
   resetPassword,
   userCourses,
   userData,
   updateCourseAdvance,
-  courseAdvance,
   allCertificates,
   updateImgUser,
+  updateUserPassword,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -24,7 +24,7 @@ const {
   validateResetPassword,
   validateMongoID,
   validateUpdateCourseAdvance,
-  validateEmail,
+  validateUpdateUserPassword,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 const {
@@ -39,16 +39,16 @@ router.post("/add", validateRegister, validateFields, addUser);
 // Login
 router.post("/login", validateLogin, validateFields, loginUser);
 
-// Persistence
+// Persistencia
 router.get("/me", validateUser, userPersistence);
 
 // Logout
 router.post("/logout", logout);
 
-// ForgotPassword
+// Forgot Password
 router.post("/forgot", validateForgotPassword, validateFields, forgotPassword);
 
-// ResetPassword
+// Reset Password
 router.post("/resetPassword", validateResetPassword, validateFields, resetPassword);
 
 //Ruta para traer los cursos comprados por un usuario
@@ -61,6 +61,7 @@ router.get("/:userId", validateMongoID, validateFields, userData);
 
 //ruta actualizar imagen
 router.put("/updateImg", validateUploadUser, validateFields, updateImgUser);
+
 // Ruta para actualizar el estado de la clase
 router.put(
   "/courseAdvance",
@@ -69,42 +70,36 @@ router.put(
   updateCourseAdvance
 );
 
-// Update (Esto hay que verlo porque vamos a usar Cloudinary)
+// Update user data (name, lastname, dni)
 router.put(
-  "/update/:userId",
-  [
-    check("name").optional().not().isEmpty(),
-    check("lastname").optional().not().isEmpty(),
-    check("dni").optional().not().isEmpty(),
-    check("password", "The password must be at least 4 characters")
-      .optional()
-      .isLength({ min: 4 }),
-    body("profileImg")
-      .optional()
-      .custom((value) => {
-        if (!value) return true;
-        if (
-          value.startsWith("http://") ||
-          value.startsWith("https://") ||
-          value.endsWith(".png") ||
-          value.endsWith(".svg")
-        ) {
-          return true;
-        }
-        throw new Error("Profile image must be a URL or a PNG/SVG file");
-      })
-      .withMessage("Profile image must be a URL or a PNG/SVG file"),
-    validateFields,
-  ],
-  updateUser
+  "/updateUserData/:userId",
+  validateMongoID,
+  validateFields,
+  updateUserData
 );
 
-// Esta ruta deberia ser del administrador
+// Update user data (password)
+router.put(
+  "/updateUserPassword/:userId",
+  validateUpdateUserPassword,
+  validateFields,
+  updateUserPassword
+);
 
-//router.get("/:userId/purchasedCourse", userCourses);
+router.get(
+  "/userCourses/:userId",
+  validateMongoID,
+  validateFields,
+  userCourses
+);
 
 // Ruta que me traiga los certificados del usuario
-router.get("/certificate", validateEmail, validateFields, allCertificates);
+router.get(
+  "/certificate/:userId",
+  validateMongoID,
+  validateFields,
+  allCertificates
+);
 
 
 module.exports = router;

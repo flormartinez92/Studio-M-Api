@@ -1,5 +1,4 @@
 const User = require("./user.models");
-const CourseAdvance = require("./advance.models");
 const Cart = require("./cart.models");
 const Certificate = require("./certificate.models");
 const Coupon = require("./coupon.models");
@@ -10,7 +9,6 @@ const Token = require("./token.models");
 
 module.exports = {
   User,
-  CourseAdvance,
   Cart,
   Certificate,
   Coupon,

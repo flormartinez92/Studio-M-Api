@@ -51,6 +51,26 @@ const validateUpdateCourseAdvance = [
   check("classId", "classId is not MongoId format").isMongoId(),
 ];
 
+const validateUpdateUserPassword = [
+  check("userId", "userId is not MongoId format").isMongoId(),
+  check(
+    "firstpassword",
+    "The password must be at least 8 characters, contain at least one uppercase, contain at least one lower case, contain at least one number."
+  )
+    .isLength({
+      min: 8,
+    })
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
+  check(
+    "secondpassword",
+    "The password must be at least 8 characters, contain at least one uppercase, contain at least one lower case, contain at least one number."
+  )
+    .isLength({
+      min: 8,
+    })
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -59,4 +79,6 @@ module.exports = {
   validateMongoID,
   validateUpdateCourseAdvance,
   validateEmail,
+  validateUpdateUserPassword,
+  // validateUpdateUserPassword,
 };

@@ -14,9 +14,9 @@ exports.loginUser = async (req, res) => {
     if (!user) return res.status(404).send("user not found");
     const password_check = await user.validatorPassword(password);
     if (!password_check) return res.status(401).send("Invalid password");
-    const { name, lastname } = user;
+    const { name, lastname, dni, _id } = user;
 
-    const token = generateToken({ name, lastname, mail });
+    const token = generateToken({ name, lastname, mail, dni, _id });
     res.cookie("token", token);
     res.status(200).send(user);
   } catch (error) {
@@ -48,23 +48,31 @@ exports.logout = (req, res) => {
 };
 
 // Este controlador hay que verlo cuando definamos lo de cloudinary
-exports.updateUser = async (req, res) => {
+exports.updateUserData = async (req, res) => {
   const { userId } = req.params;
-  const { name, lastname, dni, password, profileImg } = req.body;
+  const payload = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(userId, payload, { new: true });
+    if (!user) return res.status(404).send("User not found");
+    return res.status(200).send("User updated successfully");
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.updateUserPassword = async (req, res) => {
+  const { userId } = req.params;
+  const { firstpassword, secondpassword } = req.body;
 
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send("User not found");
-
-    user.name = name || user.name;
-    user.lastname = lastname || user.lastname;
-    user.dni = dni || user.dni;
-    user.password = password || user.password;
-    user.profileImg = profileImg || user.profileImg;
-
+    if (firstpassword != secondpassword)
+      return res.status(404).send("Invalid Password");
+    user.password = secondpassword;
     await user.save();
-
-    return res.status(200).send("User updated successfully");
+    res.send(user);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -168,10 +176,10 @@ exports.updateImgUser = async (req, res) => {
 
 // controlador que devuelve la info de los cursos de un usuario y su avance
 exports.userCourses = async (req, res) => {
-  const { mail } = req.body;
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ mail });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
     const userCourses = user.course.map(async (userCourse) => {
@@ -204,12 +212,12 @@ exports.userData = async (req, res) => {
   const { userId } = req.params;
   try {
     const user = await User.findById(userId);
-
-    !user && res.status(404).send("user not found")
+    !user && res.status(404).send("user not found");
 
     res.status(200).send(user);
   } catch (error) {
-      console.error(error)
+    console.error(error);
+    res.sendStatus(500);
   }
 };
 
@@ -238,10 +246,10 @@ exports.updateCourseAdvance = async (req, res) => {
 
 // controlador que me traiga los certificados de un usuario
 exports.allCertificates = async (req, res) => {
-  const { mail } = req.body;
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ mail });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
     const certificate = await Certificate.find({ userId: user._id })
@@ -255,7 +263,7 @@ exports.allCertificates = async (req, res) => {
         name: userId.name,
         lastname: userId.lastname,
         dni: userId.dni,
-        courseTitle: courseId.courseTitle,
+        courseTitle: courseId.courseLongTitle,
         description,
         createdAt,
       };

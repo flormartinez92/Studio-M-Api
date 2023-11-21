@@ -1,8 +1,8 @@
-const { User, Course, Favorite} = require("../models")
+const { User, Course, Favorite } = require("../models");
 
 //agregar favoritos
-const addFav = async (req, res) =>{
-  const { userId, courseId} = req.params;
+const addFav = async (req, res) => {
+  const { userId, courseId } = req.params;
 
   try {
     const userFound = await User.findById(userId).exec();

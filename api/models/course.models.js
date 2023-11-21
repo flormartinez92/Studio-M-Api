@@ -2,18 +2,18 @@ const { Schema, model } = require("mongoose");
 const Class = new Schema({
   classInfo: {
     type: String,
-    required: [true, "class is required"],
+    default: "",
   },
   video_url: {
     type: String,
-    required: [true, "url is required"],
+    default: "",
   },
 });
 
 const topic = new Schema({
   topicName: {
     type: String,
-    required: [true, "topic name is required"],
+    default: "",
   },
   classes: {
     type: [Class],
@@ -33,10 +33,15 @@ const moduleSchema = new Schema({
 });
 
 const CourseSchema = new Schema({
-  courseTitle: {
+  courseLongTitle: {
     type: String,
-    required: [true, "Course title is required"],
+    required: [true, "Course long title is required"],
   },
+  courseShortTitle: {
+    type: String,
+    required: [true, "Course short title is required"],
+  },
+
   courseSubtitle: {
     type: String,
     required: [true, "Course subtitle is required"],
@@ -77,11 +82,11 @@ const CourseSchema = new Schema({
   },
   projectsDescription: {
     type: String,
-    required: [true, "Projects description is required"],
+    default: "",
   },
   projectAim: {
     type: String,
-    required: [true, "Project Aim is required"],
+    default: "",
   },
 });
 
