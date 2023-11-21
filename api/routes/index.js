@@ -9,7 +9,6 @@ const favorites = require("./favorites.routes");
 const adminCoupon = require("./adminCoupon.routes");
 const project = require("./project.routes");
 const adminProject = require("./adminProject.routes");
-const favorites = require("./favorites.routes");
 
 router.use("/user", user);
 router.use("/cart", cart);
@@ -20,6 +19,5 @@ router.use("/favorites", favorites);
 router.use("/adminCoupon", adminCoupon);
 router.use("/project", project);
 router.use("/adminProject", adminProject);
-router.use("/favorites", favorites);
 
 module.exports = router;
