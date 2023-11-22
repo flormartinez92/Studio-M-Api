@@ -16,6 +16,7 @@ const {
   allCertificates,
   updateImgUser,
   updateUserPassword,
+  classUsers,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -26,6 +27,7 @@ const {
   validateUpdateCourseAdvance,
   validateUpdateUserPassword,
   validateEmail,
+  validateMongoclassId,
 } = require("../middleware/userValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
 const {
@@ -97,6 +99,13 @@ router.get(
   validateMongoID,
   validateFields,
   userCourses
+);
+
+router.get(
+  "/courseClass/:userId/:courseId/:classId",
+  validateMongoclassId,
+  validateFields,
+  classUsers
 );
 
 // Ruta que me traiga los certificados del usuario

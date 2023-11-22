@@ -207,6 +207,19 @@ exports.userCourses = async (req, res) => {
   }
 };
 
+exports.classUsers = async (req, res) => {
+  const { userId, courseId, classId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("user not found");
+    const course = user.course.find((idem) => idem.courseId == courseId);
+    const courseClass = course.classes.find((idem) => idem.classId == classId);
+    res.send(courseClass);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 //ruta para devolver los datos del usuario
 exports.userData = async (req, res) => {
   const { userId } = req.params;

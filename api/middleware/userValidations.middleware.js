@@ -71,6 +71,12 @@ const validateUpdateUserPassword = [
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z\d@$.!%*#?&]/),
 ];
 
+const validateMongoclassId = [
+  check("userId", "id is not type mongo").isMongoId(),
+  check("courseId", "id is not type mongo").isMongoId(),
+  check("classId", "id is not type mongo").isMongoId(),
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -80,5 +86,6 @@ module.exports = {
   validateUpdateCourseAdvance,
   validateEmail,
   validateUpdateUserPassword,
+  validateMongoclassId,
   // validateUpdateUserPassword,
 };
