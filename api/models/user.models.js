@@ -6,6 +6,14 @@ const Classes = new Schema({
     type: String,
     required: [true, "classId is required"],
   },
+  classInfo: {
+    type: String,
+    default: "",
+  },
+  video_url: {
+    type: String,
+    default: "",
+  },
   status: {
     type: Boolean,
     default: false,

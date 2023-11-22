@@ -105,7 +105,11 @@ const confirmBuyCart = async (req, res) => {
         topics.forEach((topic) => {
           const { classes } = topic;
           classes.forEach((oneClass) => {
-            classesArr.push({ classId: oneClass._id });
+            classesArr.push({
+              classId: oneClass._id,
+              classInfo: oneClass.classInfo,
+              video_url: oneClass.video_url,
+            });
           });
         });
       });
@@ -116,7 +120,7 @@ const confirmBuyCart = async (req, res) => {
 
     cart.deleteOne();
 
-    return res.status(200).send("Purchase Confirmed");
+    return res.status(200).send("Purchase confirmed");
   } catch (error) {
     res.sendStatus(500);
   }
