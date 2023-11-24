@@ -95,6 +95,16 @@ const cartCourses = async (req, res) => {
     res.sendStatus(500);
   }
 };
+const totalAmountCart = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).send("Cart not found");
+    res.status(200).send(cart);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
 
 // Confirmacion de Compra
 const confirmBuyCart = async (req, res) => {
@@ -177,4 +187,5 @@ module.exports = {
   cartCourses,
   confirmBuyCart,
   addDiscount,
+  totalAmountCart,
 };
