@@ -1,4 +1,4 @@
-const { Cart, User, Course, Coupon } = require("../models");
+const { Cart, User, Course, Coupon, Favorite } = require("../models");
 
 // Agrear Curso al carrito de compra
 const addCart = async (req, res) => {
@@ -80,7 +80,17 @@ const cartCourses = async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId }).populate("courseId");
     if (!cart) return res.status(404).send("Cart not found");
-    res.status(200).send(cart);
+    const favoritesUser = await Favorite.findOne({ userId });
+
+    const courseUpdate = cart.courseId.map((course) => {
+      const status_favorite = favoritesUser.courseId.includes(course._id);
+      if (status_favorite) {
+        return { ...course._doc, status_favorite: true };
+      } else {
+        return { ...course._doc, status_favorite: false };
+      }
+    });
+    res.status(200).send(courseUpdate);
   } catch (error) {
     res.sendStatus(500);
   }
