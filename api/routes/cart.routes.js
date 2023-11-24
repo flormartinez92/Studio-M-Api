@@ -7,6 +7,7 @@ const {
   removeCart,
   cartCourses,
   addDiscount,
+  totalAmountCart,
 } = require("../controllers/cart.controller");
 const validateIdsCart = require("../middleware/cartValidations.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
@@ -38,6 +39,13 @@ router.post(
   validateMongoID,
   validateFields,
   confirmBuyCart
+);
+
+router.get(
+  "/courses/total/:userId",
+  validateMongoID,
+  validateFields,
+  totalAmountCart
 );
 
 // Agregar cupon de descuento
