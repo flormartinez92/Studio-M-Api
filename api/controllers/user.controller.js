@@ -275,7 +275,8 @@ exports.allCertificates = async (req, res) => {
         name: userId.name,
         lastname: userId.lastname,
         dni: userId.dni,
-        courseTitle: courseId.courseLongTitle,
+        courseLongTitle: courseId.courseLongTitle,
+        courseShortTitle: courseId.courseShortTitle,
         description,
         createdAt,
       };
