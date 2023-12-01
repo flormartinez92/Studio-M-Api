@@ -6,6 +6,7 @@ const sendEmail = require("../utils/sendEmail");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
+//Logearse
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
 
@@ -24,6 +25,7 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+//Registrarse
 exports.addUser = async (req, res) => {
   const { mail } = req.body;
   try {
@@ -61,6 +63,7 @@ exports.updateUserData = async (req, res) => {
   }
 };
 
+//controlador que actuliza la contrasena del usuario
 exports.updateUserPassword = async (req, res) => {
   const { userId } = req.params;
   const { firstpassword, secondpassword } = req.body;
@@ -151,6 +154,7 @@ exports.resetPassword = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 //Controlador para actualizar la imagen
 exports.updateImgUser = async (req, res) => {
   try {
@@ -207,6 +211,7 @@ exports.userCourses = async (req, res) => {
   }
 };
 
+//ruta para...
 exports.classUsers = async (req, res) => {
   const { userId, courseId, classId } = req.params;
   try {
@@ -269,7 +274,7 @@ exports.allCertificates = async (req, res) => {
       .populate("userId");
 
     const certificateData = certificate.map((item) => {
-      const { userId, courseId, description, createdAt } = item;
+      const { userId, courseId, description, createdAt, pdfPath } = item;
 
       return {
         name: userId.name,
@@ -278,6 +283,7 @@ exports.allCertificates = async (req, res) => {
         courseLongTitle: courseId.courseLongTitle,
         courseShortTitle: courseId.courseShortTitle,
         description,
+        pdfPath,
         createdAt,
       };
     });
