@@ -3,6 +3,7 @@ const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
+const path = require("path");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
@@ -290,6 +291,24 @@ exports.allCertificates = async (req, res) => {
 
     res.send(certificateData);
   } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 };
+
+//controlador para descargar el PDF del certificado
+exports.pdfCertificate = async (req, res)=> {
+  const { userId, courseId} = req.params;
+
+  try {
+    const certificate = Certificate.findOne({userId, courseId});
+    if (!certificate) return res.status(404).send("Certificate not found");
+
+    const pdfPath = certificate.pdfPath;
+    console.log("------------------", certificate.createdAt);
+    res.download(path.resolve(pdfPath));
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
