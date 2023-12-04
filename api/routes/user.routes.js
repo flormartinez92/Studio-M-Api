@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { check, body } = require("express-validator");
 const { validateUser } = require("../middleware/auth.middleware");
+const validateFields = require("../middleware/validateFields.middleware");
+const { validateUploadUser } = require("../middleware/adminImageValidations.middleware");
 const {
   addUser,
   loginUser,
@@ -17,6 +18,7 @@ const {
   updateImgUser,
   updateUserPassword,
   classUsers,
+  pdfCertificate,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -29,10 +31,6 @@ const {
   validateEmail,
   validateMongoclassId,
 } = require("../middleware/userValidations.middleware");
-const validateFields = require("../middleware/validateFields.middleware");
-const {
-  validateUploadUser,
-} = require("../middleware/adminImageValidations.middleware");
 
 // RUTAS DEL USUARIO
 
@@ -115,5 +113,8 @@ router.get(
   validateFields,
   allCertificates
 );
+
+//Ruta que descarga el PDF del certificado
+router.get("/certificate/download/:userId/:courseId", validateMongoID, validateFields, pdfCertificate);
 
 module.exports = router;

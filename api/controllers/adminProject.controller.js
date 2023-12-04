@@ -1,5 +1,9 @@
-const { Project, User, Certificate } = require("../models");
+const { Project, User, Certificate, Course } = require("../models");
 const sendEmail = require("../utils/sendEmail");
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const certificateTemplate = require("../utils/template/certificateTemplate");
+const path = require("path");
 
 // Obtener todos los proyectos
 exports.allProjects = async (req, res) => {
@@ -69,34 +73,48 @@ exports.updateProject = async (req, res) => {
   }
 };
 
-// Cambiar el estado del proyecto (aprobado o desaprobado)
+// Cambiar el estado del proyecto (aprobado o desaprobado), crear certificado y PDF del certificado
 exports.updateStatusProject = async (req, res) => {
   const { projectId } = req.params;
   const { status, userId, courseId } = req.body;
 
   try {
-    const projectToUpdate = await Project.findByIdAndUpdate(
-      projectId,
-      { status },
-      {
-        new: true,
-      }
-    );
-    if (!projectToUpdate) {
-      return res.status(404).send("project not found");
-    }
+    const projectToUpdate = await Project.findByIdAndUpdate( projectId, { status }, { new: true });
+    !projectToUpdate && res.status(404).send("project not found");
+
+    const user = await User.findById(userId);
+    !user && res.status(404).send("user not found");
+
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).send("Course not found");
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    const certificateHTML = await certificateTemplate(user, course);
+
+    await page.setContent(certificateHTML);
+
+    const pdfPath = path.resolve(`certificates/certificate_${userId}_${courseId}.pdf`);
+    const directoryPath = path.dirname(pdfPath);
+    fs.mkdirSync(directoryPath, { recursive: true });
+    const options = { path: pdfPath, format: 'A4'};
+
+    await page.pdf(options);
+    await browser.close();
 
     const certificate = await Certificate.create({
       userId,
       courseId,
-      description:
-        "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
+      description: "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
+      pdfPath: pdfPath.toString(),
     });
 
     await certificate.save();
     await projectToUpdate.save();
-    res.status(200).send("Project updated successfully");
+
+    res.status(200).json({ filePath: pdfPath });
   } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 };
