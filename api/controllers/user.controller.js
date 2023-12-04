@@ -301,11 +301,11 @@ exports.pdfCertificate = async (req, res)=> {
   const { userId, courseId} = req.params;
 
   try {
-    const certificate = Certificate.findOne({userId, courseId});
+    const certificate = await Certificate.findOne({userId, courseId});
     if (!certificate) return res.status(404).send("Certificate not found");
 
     const pdfPath = certificate.pdfPath;
-    console.log("------------------", certificate.createdAt);
+    console.log("------------------", certificate.pdfPath);
     res.download(path.resolve(pdfPath));
   } catch (error) {
     console.error(error);

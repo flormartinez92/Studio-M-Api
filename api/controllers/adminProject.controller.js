@@ -106,7 +106,7 @@ exports.updateStatusProject = async (req, res) => {
       userId,
       courseId,
       description: "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
-      pdfPath,
+      pdfPath: pdfPath.toString(),
     });
 
     await certificate.save();
