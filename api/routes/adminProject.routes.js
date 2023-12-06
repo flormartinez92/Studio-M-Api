@@ -26,7 +26,7 @@ router.put(
   updateProject
 );
 
-// ruta para aprobar proyecto
+// ruta para aprobar proyecto (y crear certificado, y PDF del certificado)
 router.put(
   "/approved/:projectId",
   validateProjectId,

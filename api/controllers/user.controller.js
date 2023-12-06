@@ -3,9 +3,11 @@ const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
+const path = require("path");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
+//Logearse
 exports.loginUser = async (req, res) => {
   const { mail, password } = req.body;
 
@@ -24,6 +26,7 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+//Registrarse
 exports.addUser = async (req, res) => {
   const { mail } = req.body;
   try {
@@ -61,6 +64,7 @@ exports.updateUserData = async (req, res) => {
   }
 };
 
+//controlador que actuliza la contrasena del usuario
 exports.updateUserPassword = async (req, res) => {
   const { userId } = req.params;
   const { firstpassword, secondpassword } = req.body;
@@ -151,6 +155,7 @@ exports.resetPassword = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 //Controlador para actualizar la imagen
 exports.updateImgUser = async (req, res) => {
   try {
@@ -207,6 +212,7 @@ exports.userCourses = async (req, res) => {
   }
 };
 
+//ruta para...
 exports.classUsers = async (req, res) => {
   const { userId, courseId, classId } = req.params;
   try {
@@ -269,7 +275,7 @@ exports.allCertificates = async (req, res) => {
       .populate("userId");
 
     const certificateData = certificate.map((item) => {
-      const { userId, courseId, description, createdAt } = item;
+      const { userId, courseId, description, createdAt, pdfPath } = item;
 
       return {
         name: userId.name,
@@ -278,15 +284,18 @@ exports.allCertificates = async (req, res) => {
         courseLongTitle: courseId.courseLongTitle,
         courseShortTitle: courseId.courseShortTitle,
         description,
+        pdfPath,
         createdAt,
       };
     });
 
     res.send(certificateData);
   } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 };
+
 
 exports.projectUser = async (req, res) => {
   const { userId } = req.params;
@@ -306,3 +315,21 @@ exports.projectUser = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+//controlador para descargar el PDF del certificado
+exports.pdfCertificate = async (req, res)=> {
+  const { userId, courseId} = req.params;
+
+  try {
+    const certificate = await Certificate.findOne({userId, courseId});
+    if (!certificate) return res.status(404).send("Certificate not found");
+
+    const pdfPath = certificate.pdfPath;
+    console.log("------------------", certificate.pdfPath);
+    res.download(path.resolve(pdfPath));
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
+
