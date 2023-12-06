@@ -18,6 +18,7 @@ const {
   updateImgUser,
   updateUserPassword,
   classUsers,
+  projectUser,
   pdfCertificate,
 } = require("../controllers/user.controller");
 const {
@@ -114,7 +115,12 @@ router.get(
   allCertificates
 );
 
+
+// Ruta que me traiga el proyecto del usuario
+router.get("/project/:userId", validateMongoID, validateFields, projectUser);
+
 //Ruta que descarga el PDF del certificado
 router.get("/certificate/download/:userId/:courseId", validateMongoID, validateFields, pdfCertificate);
+
 
 module.exports = router;

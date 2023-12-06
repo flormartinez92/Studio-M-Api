@@ -1,4 +1,4 @@
-const { User, Token, Course, Certificate } = require("../models");
+const { User, Token, Course, Certificate, Project } = require("../models");
 const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
@@ -296,6 +296,26 @@ exports.allCertificates = async (req, res) => {
   }
 };
 
+
+exports.projectUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send("user not found");
+
+    const userProject = await Project.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(1);
+    if (!userProject || userProject.length === 0) {
+      return res.send(null);
+    }
+
+    res.status(200).send(userProject[0]);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 //controlador para descargar el PDF del certificado
 exports.pdfCertificate = async (req, res)=> {
   const { userId, courseId} = req.params;
@@ -312,3 +332,4 @@ exports.pdfCertificate = async (req, res)=> {
     res.sendStatus(500);
   }
 }
+
