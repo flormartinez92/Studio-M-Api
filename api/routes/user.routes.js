@@ -17,6 +17,7 @@ const {
   updateImgUser,
   updateUserPassword,
   classUsers,
+  projectUser,
 } = require("../controllers/user.controller");
 const {
   validateRegister,
@@ -115,5 +116,8 @@ router.get(
   validateFields,
   allCertificates
 );
+
+// Ruta que me traiga el proyecto del usuario
+router.get("/project/:userId", validateMongoID, validateFields, projectUser);
 
 module.exports = router;
