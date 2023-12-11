@@ -87,27 +87,40 @@ exports.updateStatusProject = async (req, res) => {
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).send("Course not found");
+    
+    const certificate = await Certificate.create({
+      userId,
+      courseId,
+      description: "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
+      pdfPath: " "
+    });
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      defaultViewport: null,
+    });
     const page = await browser.newPage();
-    const certificateHTML = await certificateTemplate(user, course);
+
+    // const base64Font = fs.readFileSync('assets/fonts/MysteryMixed-base64.txt', 'utf8').trim();
+    const formattedDate = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(certificate.createdAt);
+    const certificateHTML = await certificateTemplate(user, course, formattedDate, /*base64Font*/);
 
     await page.setContent(certificateHTML);
+
+    // await page.waitForSelector('.clase-de-elemento-con-estilos-cargados');
+    await page.waitForSelector('img');
+
+    await page.emulateMediaType('print');
 
     const pdfPath = path.resolve(`certificates/certificate_${userId}_${courseId}.pdf`);
     const directoryPath = path.dirname(pdfPath);
     fs.mkdirSync(directoryPath, { recursive: true });
     const options = { path: pdfPath, format: 'A4'};
 
+    certificate.pdfPath = pdfPath.toString();
+    
     await page.pdf(options);
     await browser.close();
-
-    const certificate = await Certificate.create({
-      userId,
-      courseId,
-      description: "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
-      pdfPath: pdfPath.toString(),
-    });
 
     await certificate.save();
     await projectToUpdate.save();
