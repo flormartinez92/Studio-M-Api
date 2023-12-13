@@ -117,6 +117,7 @@ exports.updateStatusProject = async (req, res) => {
 
     await page.emulateMediaType('print');
 
+    //mirar dir
     const pdfPath = path.resolve(`certificates/certificate_${userId}_${courseId}.pdf`);
     const directoryPath = path.dirname(pdfPath);
     fs.mkdirSync(directoryPath, { recursive: true });
