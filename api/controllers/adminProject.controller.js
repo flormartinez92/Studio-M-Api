@@ -101,9 +101,14 @@ exports.updateStatusProject = async (req, res) => {
     });
     const page = await browser.newPage();
 
-    // const base64Font = fs.readFileSync('assets/fonts/MysteryMixed-base64.txt', 'utf8').trim();
+    const basePath = path.resolve(__dirname, '..');
+    const mysteryFont = fs.readFileSync(path.join(basePath, 'assets/fonts/MysteryMixed-base64.txt'), 'utf8').trim();
+    const msgothicFont = fs.readFileSync(path.join(basePath, 'assets/fonts/ms-pgothic-base64.txt'), 'utf8').trim();
+    const paperBackground = fs.readFileSync(path.join(basePath, 'assets/images/background.txt'), 'utf8').trim();
+    const signature = fs.readFileSync(path.join(basePath, 'assets/images/signature.txt'), 'utf8').trim();
+
     const formattedDate = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(certificate.createdAt);
-    const certificateHTML = await certificateTemplate(user, course, formattedDate, /*base64Font*/);
+    const certificateHTML = await certificateTemplate(user, course, formattedDate, mysteryFont, msgothicFont, paperBackground, signature);
 
     await page.setContent(certificateHTML);
 
@@ -112,12 +117,14 @@ exports.updateStatusProject = async (req, res) => {
 
     await page.emulateMediaType('print');
 
-    const pdfPath = path.resolve(`certificates/certificate_${userId}_${courseId}.pdf`);
-    const directoryPath = path.dirname(pdfPath);
-    fs.mkdirSync(directoryPath, { recursive: true });
-    const options = { path: pdfPath, format: 'A4'};
+    //mirar dir
+    const pdfPath = `certificate_${userId}_${courseId}.pdf`;
+    const options = { format: 'A4'};
 
     certificate.pdfPath = pdfPath.toString();
+
+    res.setHeader('Content-Disposition', `attachment; filename=${pdfPath}`);
+    res.setHeader('Content-Type', 'application/pdf');
     
     await page.pdf(options);
     await browser.close();
@@ -125,7 +132,7 @@ exports.updateStatusProject = async (req, res) => {
     await certificate.save();
     await projectToUpdate.save();
 
-    res.status(200).json({ filePath: pdfPath });
+    res.status(200).end();
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
