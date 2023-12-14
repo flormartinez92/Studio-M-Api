@@ -118,13 +118,17 @@ exports.updateStatusProject = async (req, res) => {
     await page.emulateMediaType('print');
 
     //mirar dir
-    const pdfPath = `certificate_${userId}_${courseId}.pdf`;
-    const options = { format: 'A4'};
+    // const pdfPath = `certificate_${userId}_${courseId}.pdf`;
+    // const options = { format: 'A4'};
+    const pdfPath = path.resolve(`certificates/certificate_${userId}_${courseId}.pdf`);
+    const directoryPath = path.dirname(pdfPath);
+    fs.mkdirSync(directoryPath, { recursive: true });
+    const options = { path: pdfPath, format: 'A4'};
 
     certificate.pdfPath = pdfPath.toString();
 
-    res.setHeader('Content-Disposition', `attachment; filename=${pdfPath}`);
-    res.setHeader('Content-Type', 'application/pdf');
+    // res.setHeader('Content-Disposition', `attachment; filename=${pdfPath}`);
+    // res.setHeader('Content-Type', 'application/pdf');
     
     await page.pdf(options);
     await browser.close();
@@ -132,6 +136,7 @@ exports.updateStatusProject = async (req, res) => {
     await certificate.save();
     await projectToUpdate.save();
 
+    // res.status(200).json({ filePath: pdfPath });
     res.status(200).end();
   } catch (error) {
     console.error(error);
