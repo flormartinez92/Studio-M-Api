@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const path = require("path");
+const fs = require('fs');
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
@@ -104,12 +105,23 @@ exports.forgotPassword = async (req, res) => {
 
     const link = `${process.env.STUDIO_M_CLIENT_HOST}/reset-password?token=${resetToken}&id=${userMail._id}`;
 
+    //Tipografias a colocar en el template
+    const basePath = path.resolve(__dirname, '..');
+    const mysteryFont = fs.readFileSync(path.join(basePath, 'assets/fonts/MysteryMixed-base64.txt'), 'utf8').trim();
+    const msgothicFont = fs.readFileSync(path.join(basePath, 'assets/fonts/ms-pgothic-base64.txt'), 'utf8').trim();
+    // const mysteryFontBase64 = Buffer.from(mysteryFont).toString('base64');
+    // const msgothicFontBase64 = Buffer.from(msgothicFont).toString('base64');
+
     sendEmail(
       userMail.mail,
       "Recuperar contraseña",
       {
         name: userMail.name,
         link: link,
+        mysteryFont: mysteryFont,
+        msgothicFont: msgothicFont,
+        // mysteryFontBase64: mysteryFontBase64,
+        // msgothicFontBase64: msgothicFontBase64
       },
       `./template/requestResetPassword.handlebars`
     );

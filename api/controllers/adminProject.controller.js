@@ -11,7 +11,6 @@ exports.allProjects = async (req, res) => {
     const projects = await Project.find({ status: false })
       .populate("userId")
       .populate("courseId");
-    console.log(projects);
 
     if (!projects) res.status(404).send("Projects not found");
 
@@ -137,7 +136,7 @@ exports.updateStatusProject = async (req, res) => {
     await projectToUpdate.save();
 
     // res.status(200).json({ filePath: pdfPath });
-    res.status(200).end();
+    res.status(200).json({pdfPath});
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
