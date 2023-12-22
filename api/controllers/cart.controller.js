@@ -79,7 +79,7 @@ const cartCourses = async (req, res) => {
 
   try {
     const cart = await Cart.findOne({ userId }).populate("courseId");
-    if (!cart) return res.status(404).send("Cart not found");
+    if (!cart) return res.status(200).send([]);
     const favoritesUser = await Favorite.findOne({ userId });
 
     const courseUpdate = cart.courseId.map((course) => {
