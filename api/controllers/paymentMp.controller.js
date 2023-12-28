@@ -9,7 +9,7 @@ exports.createOrder = async (req, res) => {
 
   try {
     const preference = new Preference(client);
-    priceNumber = price;
+    priceNumber = parseInt(price);
     console.log("NUMBERRR--------------------------------------", priceNumber);
     const result = await preference.create({
       body: {
@@ -17,7 +17,7 @@ exports.createOrder = async (req, res) => {
           {
             title: title,
             quantity: 1,
-            unit_price: 20,
+            unit_price: price,
           },
         ],
         back_urls: {
@@ -35,11 +35,3 @@ exports.createOrder = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
-// exports.receiveWebhook = async (req, res) => {
-//   const payment = req.query;
-//   if (payment.type === "payment") {
-//     const data = await mercadopago.Payment.findById(payment["data.id"]);
-//   }
-//   res.send("webhook");
-// };
