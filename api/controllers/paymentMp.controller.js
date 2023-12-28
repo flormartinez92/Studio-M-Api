@@ -2,20 +2,22 @@ const mercadopago = require("mercadopago");
 const { MercadoPagoConfig, Preference } = require("mercadopago");
 
 exports.createOrder = async (req, res) => {
-  // const { title, price } = req.body;
+  const { title, price } = req.body;
   const client = new MercadoPagoConfig({
     accessToken: process.env.ACCESS_TOKEN_MP,
   });
 
   try {
     const preference = new Preference(client);
+    priceNumber = price;
+    console.log("NUMBERRR--------------------------------------", priceNumber);
     const result = await preference.create({
       body: {
         items: [
           {
-            title: "curso",
+            title: title,
             quantity: 1,
-            unit_price: 100,
+            unit_price: 20,
           },
         ],
         back_urls: {
@@ -26,7 +28,6 @@ exports.createOrder = async (req, res) => {
         auto_return: "approved",
       },
     });
-
     console.log(result);
     res.json({ result });
   } catch (error) {
@@ -35,10 +36,10 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-exports.receiveWebhook = async (req, res) => {
-  const payment = req.query;
-  if (payment.type === "payment") {
-    const data = await mercadopago.Payment.findById(payment["data.id"]);
-  }
-  res.send("webhook");
-};
+// exports.receiveWebhook = async (req, res) => {
+//   const payment = req.query;
+//   if (payment.type === "payment") {
+//     const data = await mercadopago.Payment.findById(payment["data.id"]);
+//   }
+//   res.send("webhook");
+// };
