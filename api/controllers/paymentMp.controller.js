@@ -10,14 +10,13 @@ exports.createOrder = async (req, res) => {
   try {
     const preference = new Preference(client);
     priceNumber = parseInt(price);
-    console.log("NUMBERRR--------------------------------------", priceNumber);
     const result = await preference.create({
       body: {
         items: [
           {
             title: title,
             quantity: 1,
-            unit_price: price,
+            unit_price: priceNumber,
           },
         ],
         back_urls: {
