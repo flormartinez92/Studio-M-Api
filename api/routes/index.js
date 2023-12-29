@@ -10,6 +10,7 @@ const adminCoupon = require("./adminCoupon.routes");
 const project = require("./project.routes");
 const adminProject = require("./adminProject.routes");
 const paymentMp = require("./paymentMp.routes");
+const orders = require("./orders.routes");
 
 router.use("/user", user);
 router.use("/cart", cart);
@@ -21,5 +22,7 @@ router.use("/adminCoupon", adminCoupon);
 router.use("/project", project);
 router.use("/adminProject", adminProject);
 router.use("/paymentMp", paymentMp);
+router.use("/purchaseOrder", orders);
+
 
 module.exports = router;
