@@ -18,6 +18,10 @@ const OrderSchema = new Schema({
     ref: "User",
     required: [true, "User is required"],
   },
+  mpPreferenceID: {
+    type: String,
+    default: "",
+  },
 });
 
 const Order = model("Order", OrderSchema);
