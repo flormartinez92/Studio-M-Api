@@ -17,6 +17,8 @@ exports.createOrder = async (req, res) => {
 
     // Calcula el total amount sumando los precios de los items del carrito
     const totalAmount = cartItems.totalAmount;
+    // Obtén descuento del carrito asociados a la orden
+    const totalDiscount = cartItems.discount;
 
     // Si hay un descuento, réstalo del totalAmount
     // const totalDiscount = cartItems.totalDiscount || 0;
@@ -28,7 +30,12 @@ exports.createOrder = async (req, res) => {
 
     try {
       const preference = new Preference(client);
-      priceNumber = parseFloat(price);
+      const priceNumber = parseFloat(price);
+      //decuento
+      const discount = (priceNumber * totalDiscount) / 100;
+      const finalDiscount =  priceNumber - discount
+
+      console.log("--------------------------------", finalDiscount);
       const result = await preference.create({
         body: {
           items: [
@@ -36,7 +43,7 @@ exports.createOrder = async (req, res) => {
               id: orderId,
               title: title,
               quantity: 1,
-              unit_price: totalAmount,
+              unit_price: totalDiscount ? finalDiscount : priceNumber,
             },
           ],
           back_urls: {
