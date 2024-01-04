@@ -1,5 +1,5 @@
 const mercadopago = require("mercadopago");
-const { Order } = require("../models");
+const { Order, Cart } = require("../models");
 const { MercadoPagoConfig, Preference } = require("mercadopago");
 
 exports.createOrder = async (req, res) => {
@@ -11,6 +11,17 @@ exports.createOrder = async (req, res) => {
       // no se encontro la orden
       return res.sendStatus(500);
     }
+
+    // Obtén todos los items del carrito asociados a la orden
+    const cartItems = await Cart.findOne({ userId: orderResponse.userId });
+
+    // Calcula el total amount sumando los precios de los items del carrito
+    const totalAmount = cartItems.totalAmount;
+
+    // Si hay un descuento, réstalo del totalAmount
+    // const totalDiscount = cartItems.totalDiscount || 0;
+    // const discountedTotalAmount = totalAmount + totalDiscount;
+
     const client = new MercadoPagoConfig({
       accessToken: process.env.ACCESS_TOKEN_MP,
     });
@@ -25,7 +36,7 @@ exports.createOrder = async (req, res) => {
               id: orderId,
               title: title,
               quantity: 1,
-              unit_price: priceNumber,
+              unit_price: totalAmount,
             },
           ],
           back_urls: {
