@@ -1,7 +1,7 @@
 const { Project, User, Certificate, Course } = require("../models");
 const sendEmail = require("../utils/sendEmail");
-const puppeteer = require('puppeteer');
-const fs = require('fs');
+const puppeteer = require("puppeteer");
+const fs = require("fs");
 const certificateTemplate = require("../utils/template/certificateTemplate");
 const path = require("path");
 
@@ -61,7 +61,7 @@ exports.updateProject = async (req, res) => {
 
     sendEmail(
       mail,
-      "Correcciones del proyecto",
+      "Comentarios de entrega final",
       { name: user.name, comment },
       "./template/projectComment.handlebars"
     );
@@ -78,7 +78,11 @@ exports.updateStatusProject = async (req, res) => {
   const { status, userId, courseId } = req.body;
 
   try {
-    const projectToUpdate = await Project.findByIdAndUpdate( projectId, { status }, { new: true });
+    const projectToUpdate = await Project.findByIdAndUpdate(
+      projectId,
+      { status },
+      { new: true }
+    );
     !projectToUpdate && res.status(404).send("project not found");
 
     const user = await User.findById(userId);
@@ -86,57 +90,94 @@ exports.updateStatusProject = async (req, res) => {
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).send("Course not found");
-    
+
     const certificate = await Certificate.create({
       userId,
       courseId,
-      description: "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
-      pdfPath: " "
+      description:
+        "Ha realizado y completado con éxito su curso en by M Studio, cumpliendo con todos los requisitos académicos exigidos",
+      pdfPath: " ",
     });
 
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
       defaultViewport: null,
     });
     const page = await browser.newPage();
 
-    const basePath = path.resolve(__dirname, '..');
-    const mysteryFont = fs.readFileSync(path.join(basePath, 'assets/fonts/MysteryMixed-base64.txt'), 'utf8').trim();
-    const msgothicFont = fs.readFileSync(path.join(basePath, 'assets/fonts/ms-pgothic-base64.txt'), 'utf8').trim();
-    const paperBackground = fs.readFileSync(path.join(basePath, 'assets/images/background.txt'), 'utf8').trim();
-    const signature = fs.readFileSync(path.join(basePath, 'assets/images/signature.txt'), 'utf8').trim();
+    const basePath = path.resolve(__dirname, "..");
+    const mysteryFont = fs
+      .readFileSync(
+        path.join(basePath, "assets/fonts/MysteryMixed-base64.txt"),
+        "utf8"
+      )
+      .trim();
+    const msgothicFont = fs
+      .readFileSync(
+        path.join(basePath, "assets/fonts/ms-pgothic-base64.txt"),
+        "utf8"
+      )
+      .trim();
+    const paperBackground = fs
+      .readFileSync(path.join(basePath, "assets/images/background.txt"), "utf8")
+      .trim();
+    const signature = fs
+      .readFileSync(path.join(basePath, "assets/images/signature.txt"), "utf8")
+      .trim();
 
-    const formattedDate = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(certificate.createdAt);
-    const certificateHTML = await certificateTemplate(user, course, formattedDate, mysteryFont, msgothicFont, paperBackground, signature);
+    const formattedDate = new Intl.DateTimeFormat("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(certificate.createdAt);
+    const certificateHTML = await certificateTemplate(
+      user,
+      course,
+      formattedDate,
+      mysteryFont,
+      msgothicFont,
+      paperBackground,
+      signature
+    );
 
     await page.setContent(certificateHTML);
 
     // await page.waitForSelector('.clase-de-elemento-con-estilos-cargados');
-    await page.waitForSelector('img');
+    await page.waitForSelector("img");
 
-    await page.emulateMediaType('print');
+    await page.emulateMediaType("print");
 
     //mirar dir
     // const pdfPath = `certificate_${userId}_${courseId}.pdf`;
     // const options = { format: 'A4'};
-    const pdfPath = path.resolve(`certificates/certificate_${userId}_${courseId}.pdf`);
+    const pdfPath = path.resolve(
+      `certificates/certificate_${userId}_${courseId}.pdf`
+    );
     const directoryPath = path.dirname(pdfPath);
     fs.mkdirSync(directoryPath, { recursive: true });
-    const options = { path: pdfPath, format: 'A4'};
+    const options = { path: pdfPath, format: "A4" };
 
     certificate.pdfPath = pdfPath.toString();
 
     // res.setHeader('Content-Disposition', `attachment; filename=${pdfPath}`);
     // res.setHeader('Content-Type', 'application/pdf');
-    
+
     await page.pdf(options);
     await browser.close();
 
     await certificate.save();
     await projectToUpdate.save();
 
+    sendEmail(
+      user.mail,
+      "Proyecto Aprobado",
+      { name: user.name },
+      "./template/projectApproved.handlebars",
+      pdfPath
+    );
+
     // res.status(200).json({ filePath: pdfPath });
-    res.status(200).json({pdfPath});
+    res.status(200).json({ pdfPath });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

@@ -1,12 +1,31 @@
 <html>
   <head>
-    <style>
-
+    <style type="text/css">
+      body { font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+      'Lucida Sans Unicode', Geneva, Verdana, sans-serif ; display: flex;
+      justify-content: center; align-items: center; height: 70rem; width: 50rem;
+      margin: 0; padding: 0} .container { text-align: center; margin: 0 auto;
+      padding: 0.3rem 0; }
     </style>
   </head>
   <body>
-    <p>Hola {{name}},</p>
-    <p>{{comment}}</p>
-
+    <div>
+      <div
+        class="container"
+        style="width:60%; height: 60%; background-color:white;"
+      >
+        <h2 style="font-size: 4rem; margin: 0px; color: #262525">Studio by M</h2>
+        <h3 style="color: black; margin: 0px; margin-top: 1rem;">Hola,
+          {{name}}</h3>
+        <p style="color: black;">Haz recibido un comentario en tu entrega final</p>
+        <div
+          style="border-style: solid; border-color: #E21B7B; border-width: 0.075rem"
+        >
+          <p style="margin: 1.5rem; color: black;">{{comment}}</p>
+        </div>
+        <h5 style="color: black;">¿Necesitas ayuda? Envíanos un email a
+          mbernal@studiobym.com</h5>
+      </div>
+    </div>
   </body>
 </html>

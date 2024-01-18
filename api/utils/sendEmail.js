@@ -3,7 +3,7 @@ const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
 
-const sendEmail = async (email, subject, payload, template) => {
+const sendEmail = async (email, subject, payload, template, pdf = null) => {
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -24,6 +24,9 @@ const sendEmail = async (email, subject, payload, template) => {
         to: email,
         subject: subject,
         html: compiledTemplate(payload),
+        attachments: {
+          filename: pdf,
+        },
       };
     };
 
