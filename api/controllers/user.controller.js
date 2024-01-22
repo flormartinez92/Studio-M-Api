@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const path = require("path");
-const fs = require('fs');
+const fs = require("fs");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
@@ -106,11 +106,23 @@ exports.forgotPassword = async (req, res) => {
     const link = `${process.env.STUDIO_M_CLIENT_HOST}/reset-password?token=${resetToken}&id=${userMail._id}`;
 
     //Tipografias a colocar en el template
-    const basePath = path.resolve(__dirname, '..');
-    const mysteryFont = fs.readFileSync(path.join(basePath, 'assets/fonts/MysteryMixed-base64.txt'), 'utf8').trim();
-    const msgothicFont = fs.readFileSync(path.join(basePath, 'assets/fonts/ms-pgothic-base64.txt'), 'utf8').trim();
+    // const basePath = path.resolve(__dirname, "..");
+    // const mysteryFont = fs
+    //   .readFileSync(
+    //     path.join(basePath, "assets/fonts/MysteryMixed-base64.txt"),
+    //     "utf8"
+    //   )
+    //   .trim();
+    // const msgothicFont = fs.readFileSync(path.join(basePath, 'assets/fonts/ms-pgothic-base64.txt'), 'utf8').trim();
     // const mysteryFontBase64 = Buffer.from(mysteryFont).toString('base64');
     // const msgothicFontBase64 = Buffer.from(msgothicFont).toString('base64');
+
+    // const title = fs
+    //   .readFileSync(
+    //     path.join(basePath, "assets/images/studioTitle.txt"),
+    //     "utf-8"
+    //   )
+    //   .trim();
 
     sendEmail(
       userMail.mail,
@@ -118,8 +130,9 @@ exports.forgotPassword = async (req, res) => {
       {
         name: userMail.name,
         link: link,
-        mysteryFont: mysteryFont,
-        msgothicFont: msgothicFont,
+        // title: title,
+        // mysteryFont: mysteryFont,
+        // msgothicFont: msgothicFont,
         // mysteryFontBase64: mysteryFontBase64,
         // msgothicFontBase64: msgothicFontBase64
       },
@@ -157,7 +170,10 @@ exports.resetPassword = async (req, res) => {
     sendEmail(
       user.mail,
       "Contraseña recuperada exitosamente",
-      { name: user.name },
+      {
+        name: user.name,
+        link: "https://api.whatsapp.com/qr/D4K4N3P4NR4CL1?autoload=1&app_absent=0",
+      },
       "./template/resetPassword.handlebars"
     );
     await passwordResetToken.deleteOne();
@@ -309,7 +325,6 @@ exports.allCertificates = async (req, res) => {
   }
 };
 
-
 exports.projectUser = async (req, res) => {
   const { userId } = req.params;
   try {
@@ -330,11 +345,11 @@ exports.projectUser = async (req, res) => {
 };
 
 //controlador para descargar el PDF del certificado
-exports.pdfCertificate = async (req, res)=> {
-  const { userId, courseId} = req.params;
+exports.pdfCertificate = async (req, res) => {
+  const { userId, courseId } = req.params;
 
   try {
-    const certificate = await Certificate.findOne({userId, courseId});
+    const certificate = await Certificate.findOne({ userId, courseId });
     if (!certificate) return res.status(404).send("Certificate not found");
 
     const pdfPath = certificate.pdfPath;
@@ -344,5 +359,4 @@ exports.pdfCertificate = async (req, res)=> {
     console.error(error);
     res.sendStatus(500);
   }
-}
-
+};

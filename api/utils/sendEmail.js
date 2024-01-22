@@ -24,6 +24,9 @@ const sendEmail = async (email, subject, payload, template) => {
         to: email,
         subject: subject,
         html: compiledTemplate(payload),
+        // attachments: {
+        //   filename: pdf,
+        // },
       };
     };
 
