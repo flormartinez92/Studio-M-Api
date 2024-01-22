@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <style type="text/css">
+      body { font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+      'Lucida Sans Unicode', Geneva, Verdana, sans-serif ; display: flex;
+      justify-content: center; align-items: center; height: 70rem; width: 50rem;
+      margin: 0; padding: 0} .container { text-align: center; margin: 0 auto;
+      padding: 0.3rem 0; } .left-align { text-align: left; margin-top: 1rem;
+      margin-left: 1rem; color: black; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div
+        class="container"
+        style="width:60%; height: 60%; background-color:white;"
+      >
+        <h2 style="font-size: 4rem; margin: 0px; color: #262525">Studio by M</h2>
+        <h3 style="color: black; margin: 0px; margin-top: 1rem;">Hola,
+          {{name}}</h3>
+        <p style="color: black;">Felicitaciones por tu compra {{id}}</p>
+        <div class="left-align">
+          <p>Curso: {{courseName}}</p>
+          <p>Precio: {{precio}}</p>
+          <p>Descuento: {{descuento}}</p>
+          <p>Total: {{total}}</p>
+        </div>
+        <h5 style="color: black;">¿Necesitas ayuda? Envíanos un email a
+          mbernal@studiobym.com</h5>
+      </div>
+    </div>
+  </body>
+</html>

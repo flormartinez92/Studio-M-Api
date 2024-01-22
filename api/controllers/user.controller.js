@@ -117,12 +117,20 @@ exports.forgotPassword = async (req, res) => {
     // const mysteryFontBase64 = Buffer.from(mysteryFont).toString('base64');
     // const msgothicFontBase64 = Buffer.from(msgothicFont).toString('base64');
 
+    // const title = fs
+    //   .readFileSync(
+    //     path.join(basePath, "assets/images/studioTitle.txt"),
+    //     "utf-8"
+    //   )
+    //   .trim();
+
     sendEmail(
       userMail.mail,
       "Recuperar contraseña",
       {
         name: userMail.name,
         link: link,
+        // title: title,
         // mysteryFont: mysteryFont,
         // msgothicFont: msgothicFont,
         // mysteryFontBase64: mysteryFontBase64,
