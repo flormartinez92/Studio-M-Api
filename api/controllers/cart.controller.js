@@ -95,6 +95,7 @@ const cartCourses = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 const totalAmountCart = async (req, res) => {
   const { userId } = req.params;
   try {
