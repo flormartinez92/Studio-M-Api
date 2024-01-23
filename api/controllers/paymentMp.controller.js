@@ -1,6 +1,7 @@
 const mercadopago = require("mercadopago");
 const { Order, Cart } = require("../models");
 const { MercadoPagoConfig, Preference } = require("mercadopago");
+const { findOne } = require("../models/user.models");
 
 exports.createOrder = async (req, res) => {
   const { cartCourses, orderId } = req.body;
@@ -15,6 +16,10 @@ exports.createOrder = async (req, res) => {
 
     // Obtén descuento del carrito asociados a la orden (de haberlo aplicado)
     const totalDiscount = cartItems.discount;
+
+    console.log("DESCEUNTO-------------------------------------", totalDiscount);
+    console.log("PRECIO-------------------------------------", cartItems.totalDiscount);
+    console.log("PRECIO2-------------------------------------", cartItems.totalAmount);
 
     //Genera configuracion de Mercado Pago
     const client = new MercadoPagoConfig({ accessToken: process.env.ACCESS_TOKEN_MP });
@@ -42,15 +47,16 @@ exports.createOrder = async (req, res) => {
         body: {
           items: courses,
           back_urls: {
-            success: "http://localhost:3000/success",
-            failure: "http://localhost:3000/failure",
-            pending: "http://localhost:3000/pending",
+            success: "http://localhost:3000/trolley/purchase-completed",
+            failure: "http://localhost:3000/",
+            pending: "http://localhost:3000/loading",
           },
           auto_return: "approved",
         },
       });
 
       orderResponse.mpPreferenceID = result.id;
+      // await orderResponse.updateOne( result.id);
       await orderResponse.save();
       res.send(orderResponse).status(200);
     } catch (error) {
@@ -62,3 +68,17 @@ exports.createOrder = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+exports.updateOrder = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const order = await Order.findOne({userId});
+    !order && res.status(404).send("No Se Encontro Orden")
+
+    res.status(200).send(order)
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500)
+  }
+}
