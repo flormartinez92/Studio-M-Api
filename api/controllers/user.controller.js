@@ -331,14 +331,12 @@ exports.projectUser = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send("user not found");
 
-    const userProject = await Project.find({ userId })
-      .sort({ createdAt: -1 })
-      .limit(1);
+    const userProject = await Project.find({ userId });
     if (!userProject || userProject.length === 0) {
       return res.send(null);
     }
 
-    res.status(200).send(userProject[0]);
+    res.status(200).send(userProject);
   } catch (error) {
     res.sendStatus(500);
   }
