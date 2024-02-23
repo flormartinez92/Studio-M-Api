@@ -1,10 +1,16 @@
-const { User, Token, Course, Certificate, Project } = require("../models");
+const {
+  User,
+  Token,
+  Course,
+  Certificate,
+  Project,
+  Favorite,
+} = require("../models");
 const { generateToken } = require("../config/token");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const path = require("path");
-const fs = require("fs");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
@@ -21,6 +27,12 @@ exports.loginUser = async (req, res) => {
 
     const token = generateToken({ name, lastname, mail, dni, _id, isAdmin });
     res.cookie("token", token);
+
+    const userFav = await Favorite.findOne({ userId: user._id });
+    if (!userFav) {
+      const newFav = new Favorite({ userId: user._id });
+      await newFav.save();
+    }
     res.status(200).send({ token, user });
   } catch (error) {
     res.sendStatus(500);
@@ -105,36 +117,12 @@ exports.forgotPassword = async (req, res) => {
 
     const link = `${process.env.STUDIO_M_CLIENT_HOST}/reset-password?token=${resetToken}&id=${userMail._id}`;
 
-    //Tipografias a colocar en el template
-    // const basePath = path.resolve(__dirname, "..");
-    // const mysteryFont = fs
-    //   .readFileSync(
-    //     path.join(basePath, "assets/fonts/MysteryMixed-base64.txt"),
-    //     "utf8"
-    //   )
-    //   .trim();
-    // const msgothicFont = fs.readFileSync(path.join(basePath, 'assets/fonts/ms-pgothic-base64.txt'), 'utf8').trim();
-    // const mysteryFontBase64 = Buffer.from(mysteryFont).toString('base64');
-    // const msgothicFontBase64 = Buffer.from(msgothicFont).toString('base64');
-
-    // const title = fs
-    //   .readFileSync(
-    //     path.join(basePath, "assets/images/studioTitle.txt"),
-    //     "utf-8"
-    //   )
-    //   .trim();
-
     sendEmail(
       userMail.mail,
       "Recuperar contraseña",
       {
         name: userMail.name,
         link: link,
-        // title: title,
-        // mysteryFont: mysteryFont,
-        // msgothicFont: msgothicFont,
-        // mysteryFontBase64: mysteryFontBase64,
-        // msgothicFontBase64: msgothicFontBase64
       },
       `./template/requestResetPassword.handlebars`
     );
@@ -351,7 +339,7 @@ exports.pdfCertificate = async (req, res) => {
     if (!certificate) return res.status(404).send("Certificate not found");
 
     const pdfPath = certificate.pdfPath;
-    console.log("------------------", certificate.pdfPath);
+    // console.log("------------------", certificate.pdfPath);
     res.download(path.resolve(pdfPath));
   } catch (error) {
     console.error(error);

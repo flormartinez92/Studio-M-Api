@@ -9,6 +9,7 @@ exports.createOrder = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
 exports.updateOrder = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -21,7 +22,7 @@ exports.updateOrder = async (req, res) => {
     res.sendStatus(500);
   }
 };
-//sd
+
 exports.getOrderIdUser = async (req, res) => {
   const { userId } = req.params;
   try {
