@@ -5,7 +5,6 @@ cloudinary.config(process.env.CLOUDINARY_URL);
 exports.addCourse = async (req, res) => {
   try {
     const course = new Course(req.body);
-    console.log(req.files);
     await course.save();
     res.status(201).send(course);
   } catch (error) {

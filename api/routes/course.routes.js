@@ -7,9 +7,6 @@ const {
 } = require("../middleware/courseValidations.middleware");
 
 router.get("/all-courses", allCourses);
-router.get("/sd", async (req, res) => {
-  res.send("PROBANDO");
-});
 
 router.get(
   "/all-courses/:id",

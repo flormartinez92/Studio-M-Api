@@ -21,5 +21,6 @@ exports.oneCourse = async (req, res) => {
     res.status(200).send(course);
   } catch (error) {
     console.error(error);
+    res.sendStatus(500);
   }
 };

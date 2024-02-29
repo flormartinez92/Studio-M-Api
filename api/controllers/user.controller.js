@@ -228,7 +228,6 @@ exports.userCourses = async (req, res) => {
   }
 };
 
-//ruta para...
 exports.classUsers = async (req, res) => {
   const { userId, courseId, classId } = req.params;
   try {
@@ -339,7 +338,6 @@ exports.pdfCertificate = async (req, res) => {
     if (!certificate) return res.status(404).send("Certificate not found");
 
     const pdfPath = certificate.pdfPath;
-    // console.log("------------------", certificate.pdfPath);
     res.download(path.resolve(pdfPath));
   } catch (error) {
     console.error(error);

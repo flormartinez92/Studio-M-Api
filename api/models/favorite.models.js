@@ -4,7 +4,6 @@ const FavoriteSchema = new Schema({
   courseId: [
     {
       type: Schema.Types.ObjectId,
-      // required: [true, "Course is required"],
       ref: "Course",
     },
   ],

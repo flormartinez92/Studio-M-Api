@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { validateUser } = require("../middleware/auth.middleware");
 const validateFields = require("../middleware/validateFields.middleware");
-const { validateUploadUser } = require("../middleware/adminImageValidations.middleware");
+const {
+  validateUploadUser,
+} = require("../middleware/adminImageValidations.middleware");
 const {
   addUser,
   loginUser,
@@ -64,8 +66,6 @@ router.post("/userCourses", validateEmail, validateFields, userCourses);
 //Ruta que trae la informacion del usuario
 router.get("/:userId", validateMongoID, validateFields, userData);
 
-// router.get("/:userId/courses", validateMongoID, userCourses);
-
 //ruta actualizar imagen
 router.put("/updateImg", validateUploadUser, validateFields, updateImgUser);
 
@@ -115,12 +115,15 @@ router.get(
   allCertificates
 );
 
-
 // Ruta que me traiga el proyecto del usuario
 router.get("/project/:userId", validateMongoID, validateFields, projectUser);
 
 //Ruta que descarga el PDF del certificado
-router.get("/certificate/download/:userId/:courseId", validateMongoID, validateFields, pdfCertificate);
-
+router.get(
+  "/certificate/download/:userId/:courseId",
+  validateMongoID,
+  validateFields,
+  pdfCertificate
+);
 
 module.exports = router;
