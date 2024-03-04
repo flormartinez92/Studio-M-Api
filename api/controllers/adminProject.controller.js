@@ -141,15 +141,9 @@ exports.updateStatusProject = async (req, res) => {
     );
 
     await page.setContent(certificateHTML);
-
-    // await page.waitForSelector('.clase-de-elemento-con-estilos-cargados');
     await page.waitForSelector("img");
-
     await page.emulateMediaType("print");
 
-    //mirar dir
-    // const pdfPath = `certificate_${userId}_${courseId}.pdf`;
-    // const options = { format: 'A4'};
     const pdfPath = path.resolve(
       `certificates/certificate_${userId}_${courseId}.pdf`
     );
@@ -158,9 +152,6 @@ exports.updateStatusProject = async (req, res) => {
     const options = { path: pdfPath, format: "A4" };
 
     certificate.pdfPath = pdfPath.toString();
-
-    // res.setHeader('Content-Disposition', `attachment; filename=${pdfPath}`);
-    // res.setHeader('Content-Type', 'application/pdf');
 
     await page.pdf(options);
     await browser.close();
@@ -176,7 +167,6 @@ exports.updateStatusProject = async (req, res) => {
       pdfPath
     );
 
-    // res.status(200).json({ filePath: pdfPath });
     res.status(200).json({ pdfPath });
   } catch (error) {
     console.error(error);
@@ -208,5 +198,6 @@ exports.oneProject = async (req, res) => {
     res.status(200).send(project);
   } catch (error) {
     console.error(error);
+    res.sendStatus(500);
   }
 };

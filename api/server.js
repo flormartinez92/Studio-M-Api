@@ -20,8 +20,6 @@ app.use(
   })
 );
 
-// app.use(express.static(__dirname + "/assets"));
-
 app.use(
   cors({
     origin: `${process.env.STUDIO_M_CLIENT_HOST}`,
