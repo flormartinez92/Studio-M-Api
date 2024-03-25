@@ -6,7 +6,7 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.ACCESS_TOKEN_MP,
 });
 
-exports.createOrderIvan = async (req, res) => {
+exports.createOrder = async (req, res) => {
   const { quantity, id, title, price } = req.body;
   console.log({ quantity, id, title, price });
   try {
@@ -25,6 +25,7 @@ exports.createOrderIvan = async (req, res) => {
           },
         ],
         back_urls: {
+          /* http://localhost:3000/trolley/purchase-completed */
           success: "http://localhost:3000/trolley/purchase-completed",
           failure: "http://localhost:3000/",
           pending: "http://localhost:3000/loading",
@@ -46,8 +47,27 @@ exports.createOrderIvan = async (req, res) => {
     res.status(500).send("Error al crear preferencia");
   }
 };
+exports.feedbackMp = async (req, res) => {
+  //asdasd
+  res.send(req.query);
+};
 
-exports.createOrder = async (req, res) => {
+exports.updateStatus = async (req, res) => {
+  try {
+    const { mpPreferenceID, mpStatus } = req.body;
+    const updateOrder = await Order.findOneAndUpdate(
+      {
+        $where: { mpPreferenceID },
+      },
+      { mpStatus },
+      { new: true }
+    );
+    res.send(updateOrder);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+/* exports.createOrder = async (req, res) => {
   const { cartCourses, orderId } = req.body;
   console.log("HOLAAA");
 
@@ -114,9 +134,15 @@ exports.createOrder = async (req, res) => {
       });
 
       orderResponse.mpPreferenceID = result.id;
+
       // await orderResponse.updateOne( result.id);
       await orderResponse.save();
-      res.send(orderResponse).status(200);
+      res
+        .send({
+          ...orderResponse._doc,
+          linkPayment: result.sandbox_init_point,
+        })
+        .status(200);
     } catch (error) {
       console.error("Error creating preference:", error);
       res.status(500).send("Internal Server Error");
@@ -140,3 +166,4 @@ exports.updateOrder = async (req, res) => {
     res.sendStatus(500);
   }
 };
+ */

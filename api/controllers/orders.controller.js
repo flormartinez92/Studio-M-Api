@@ -15,6 +15,7 @@ exports.updateOrder = async (req, res) => {
     const order = await Order.findOne({ userId, status: false });
     if (!order) return res.status(404).send("Order not found");
     Object.assign(order, req.body);
+
     await order.save();
     res.send(order).status(200);
   } catch (error) {

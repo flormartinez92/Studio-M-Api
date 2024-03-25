@@ -116,7 +116,7 @@ const confirmBuyCart = async (req, res) => {
     if (!user) return res.status(404).send("user not found");
 
     const cart = await Cart.findOne({ userId }).populate("courseId");
-    if (!cart) res.status(404).send("Cart not found");
+    if (!cart) return res.status(404).send("Cart not found");
 
     const courseData = cart.courseId.map((prop) => {
       let classesArr = [];
