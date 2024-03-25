@@ -22,6 +22,10 @@ const OrderSchema = new Schema({
     type: String,
     default: "",
   },
+  mpStatus: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Order = model("Order", OrderSchema);
