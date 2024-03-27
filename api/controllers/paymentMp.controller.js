@@ -18,7 +18,7 @@ exports.createOrder = async (req, res) => {
           {
             id,
             title: title,
-            currency_id: "ARS",
+            currency_id: "USD",
             category_id: "art",
             quantity: quantity,
             unit_price: price,
